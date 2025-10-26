@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from backend.config import settings
-from backend.api.routes import universities
+from backend.api.routes import universities, auth
 import uvicorn
 
 
@@ -34,6 +34,7 @@ app.add_middleware(
 
 
 # Include API routers
+app.include_router(auth.router, prefix="/api", tags=["Authentication"])
 app.include_router(universities.router, prefix="/api", tags=["Universities"])
 
 

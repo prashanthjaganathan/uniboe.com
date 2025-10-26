@@ -4,7 +4,7 @@
 
 ### Branch Strategy
 - `main` - Production branch (auto-deploys)
-- `dev` - devment branch
+- `dev` - dev branch
 - `feature/*` - Feature branches
 - `bugfix/*` - Bug fix branches
 - `hotfix/*` - Emergency fixes

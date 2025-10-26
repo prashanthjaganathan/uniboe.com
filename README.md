@@ -20,7 +20,7 @@ uniboe/
 ## Setup Instructions
 See individual README files in `frontend/` and `backend/` directories.
 
-## devment Workflow
+## dev Workflow
 1. Create feature branch from `dev`
 2. Make changes and commit
 3. Push and create Pull Request

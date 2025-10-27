@@ -60,6 +60,17 @@ from backend.core.models.chat import (
     ConversationDetailResponse,
 )
 
+# Profile models
+from backend.core.models.profile import (
+    ProfileUpdate,
+    ProfileResponse,
+    PublicProfileResponse,
+    ProfileSearchRequest,
+    ProfileListResponse,
+    ProfileStatsResponse,
+    ProfilePictureUploadResponse,
+)
+
 __all__ = [
     # Auth models
     "UserRegistrationRequest",
@@ -102,4 +113,12 @@ __all__ = [
     "EncryptionKey",
     "MessageUpdateResponse",
     "ConversationDetailResponse",
+    # Profile models
+    "ProfileUpdate",
+    "ProfileResponse",
+    "PublicProfileResponse",
+    "ProfileSearchRequest",
+    "ProfileListResponse",
+    "ProfileStatsResponse",
+    "ProfilePictureUploadResponse",
 ]

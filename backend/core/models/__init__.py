@@ -34,6 +34,17 @@ from backend.core.models.feed import (
     LikeRequest,
 )
 
+# Housing models
+from backend.core.models.housing import (
+    HousingListingCreate,
+    HousingListingUpdate,
+    HousingListingResponse,
+    HousingListResponse,
+    HousingSearchFilters,
+    HousingLikeResponse,
+    PropertyType,
+)
+
 __all__ = [
     # Auth models
     "UserRegistrationRequest",
@@ -56,4 +67,12 @@ __all__ = [
     "PostListResponse",
     "LikeResponse",
     "LikeRequest",
+    # Housing models
+    "HousingListingCreate",
+    "HousingListingUpdate",
+    "HousingListingResponse",
+    "HousingListResponse",
+    "HousingSearchFilters",
+    "HousingLikeResponse",
+    "PropertyType",
 ]

@@ -15,6 +15,9 @@ from uuid import UUID
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
+# OAuth2 scheme that doesn't raise error if token is missing (for optional auth)
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> UserResponse:
     """
@@ -109,7 +112,7 @@ async def get_current_active_user(
 
 
 async def get_optional_current_user(
-    token: Optional[str] = Depends(oauth2_scheme)
+    token: Optional[str] = Depends(oauth2_scheme_optional)
 ) -> Optional[UserResponse]:
     """
     Get current user if authenticated, None otherwise.
@@ -122,6 +125,13 @@ async def get_optional_current_user(
     
     Returns:
         UserResponse or None: User if authenticated, None otherwise
+    
+    Example:
+        >>> @app.get("/public")
+        >>> async def public_content(user: Optional[UserResponse] = Depends(get_optional_current_user)):
+        >>>     if user:
+        >>>         return {"message": f"Hello {user.full_name}"}
+        >>>     return {"message": "Hello guest"}
     """
     if not token:
         return None

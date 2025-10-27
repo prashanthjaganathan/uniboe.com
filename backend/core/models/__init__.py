@@ -45,6 +45,21 @@ from backend.core.models.housing import (
     PropertyType,
 )
 
+# Chat models
+from backend.core.models.chat import (
+    MessageCreate,
+    MessageResponse,
+    ConversationCreate,
+    ConversationResponse,
+    ConversationListResponse,
+    MessageListResponse,
+    MarkReadRequest,
+    ChatSearchRequest,
+    EncryptionKey,
+    MessageUpdateResponse,
+    ConversationDetailResponse,
+)
+
 __all__ = [
     # Auth models
     "UserRegistrationRequest",
@@ -75,4 +90,16 @@ __all__ = [
     "HousingSearchFilters",
     "HousingLikeResponse",
     "PropertyType",
+    # Chat models
+    "MessageCreate",
+    "MessageResponse",
+    "ConversationCreate",
+    "ConversationResponse",
+    "ConversationListResponse",
+    "MessageListResponse",
+    "MarkReadRequest",
+    "ChatSearchRequest",
+    "EncryptionKey",
+    "MessageUpdateResponse",
+    "ConversationDetailResponse",
 ]

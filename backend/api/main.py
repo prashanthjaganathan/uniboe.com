@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from backend.config import settings
-from backend.api.routes import universities, auth, feed, housing, chat, profile
+from backend.api.routes import universities, auth, feed, housing, chat, profile, olive
 import uvicorn
 
 
@@ -40,6 +40,7 @@ app.include_router(feed.router, prefix="/api", tags=["Feed"])
 app.include_router(housing.router, prefix="/api", tags=["Housing"])
 app.include_router(chat.router, prefix="/api", tags=["Chat"])
 app.include_router(profile.router, prefix="/api", tags=["Profile"])
+app.include_router(olive.router, prefix="/api", tags=["Olive AI"])
 
 
 @app.get("/", tags=["Root"])

@@ -71,6 +71,20 @@ from backend.core.models.profile import (
     ProfilePictureUploadResponse,
 )
 
+# Olive AI models
+from backend.core.models.olive import (
+    OliveMessageCreate,
+    OliveMessageResponse,
+    OliveConversationCreate,
+    OliveConversationResponse,
+    OliveConversationListResponse,
+    OliveConversationDetailResponse,
+    OliveChatRequest,
+    OliveChatResponse,
+    OliveConversationUpdateRequest,
+    MessageRole,
+)
+
 __all__ = [
     # Auth models
     "UserRegistrationRequest",
@@ -121,4 +135,15 @@ __all__ = [
     "ProfileListResponse",
     "ProfileStatsResponse",
     "ProfilePictureUploadResponse",
+    # Olive AI models
+    "OliveMessageCreate",
+    "OliveMessageResponse",
+    "OliveConversationCreate",
+    "OliveConversationResponse",
+    "OliveConversationListResponse",
+    "OliveConversationDetailResponse",
+    "OliveChatRequest",
+    "OliveChatResponse",
+    "OliveConversationUpdateRequest",
+    "MessageRole",
 ]

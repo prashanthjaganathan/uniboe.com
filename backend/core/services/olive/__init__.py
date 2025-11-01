@@ -5,11 +5,11 @@ Exports the OliveService class and singleton getter function.
 """
 
 from backend.core.services.olive.olive_service import (
-    OliveService,
-    get_olive_service,
     ConversationNotFoundError,
-    UnauthorizedError,
     GroqAPIError,
+    OliveService,
+    UnauthorizedError,
+    get_olive_service,
 )
 
 __all__ = [
@@ -19,4 +19,3 @@ __all__ = [
     "UnauthorizedError",
     "GroqAPIError",
 ]
-

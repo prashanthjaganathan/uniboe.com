@@ -6,10 +6,10 @@ Exports the ChatService class and singleton getter function.
 
 from backend.core.services.chat.chat_service import (
     ChatService,
-    get_chat_service,
     ConversationNotFoundError,
-    UnauthorizedError,
     InvalidParticipantError,
+    UnauthorizedError,
+    get_chat_service,
 )
 
 __all__ = [
@@ -19,4 +19,3 @@ __all__ = [
     "UnauthorizedError",
     "InvalidParticipantError",
 ]
-

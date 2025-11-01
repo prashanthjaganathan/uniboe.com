@@ -1,0 +1,83 @@
+# .pre-commit-config.yaml
+repos:
+  # Stage 1: Basic cleanup
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        files: ^backend/.*\.py$
+      - id: end-of-file-fixer
+        files: ^backend/.*\.py$
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=2000']
+      - id: check-merge-conflict
+      - id: debug-statements
+        files: ^backend/.*\.py$
+      - id: detect-private-key
+
+  # Stage 2: Remove unused imports/variables FIRST
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        files: ^backend/.*\.py$
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-unused-variables
+          - --remove-duplicate-keys
+          - --ignore-init-module-imports
+
+  # Stage 3: Sort imports (after autoflake removes unused ones)
+  - repo: https://github.com/pycqa/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
+        files: ^backend/.*\.py$
+        args: [--profile=black, --line-length=100]
+
+  # Stage 4: Format code (after isort)
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
+        files: ^backend/.*\.py$
+        args: [--line-length=100]
+
+  # Stage 5: Fix remaining PEP8 issues (after Black)
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2
+    hooks:
+      - id: autopep8
+        files: ^backend/.*\.py$
+        args:
+          - --in-place
+          - --aggressive
+          - --aggressive
+          - --max-line-length=100
+          - --ignore=E501,W503,E203  # Let Black handle these
+
+  # Stage 6: Final check (report only, don't fail)
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+        files: ^backend/.*\.py$
+        args: [--config=backend/.flake8]
+
+  # Frontend hooks
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        files: ^frontend/.*\.(js|jsx|json|css|md|html)$
+        args: [--write, --print-width=100]
+
+  # Secrets check
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        exclude: package-lock.json

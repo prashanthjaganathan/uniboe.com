@@ -6,83 +6,85 @@ Contains Pydantic models for data validation and serialization.
 
 # Auth models
 from backend.core.models.auth import (
-    UserRegistrationRequest,
-    UserLoginRequest,
-    UserResponse,
-    TokenResponse,
-    PasswordChangeRequest,
     EmailVerificationRequest,
+    PasswordChangeRequest,
     RegistrationConfirmationResponse,
-)
-
-# University models
-from backend.core.models.university import (
-    UniversityBase,
-    UniversityResponse,
-    UniversityCreate,
-    EmailVerificationRequest as UniversityEmailVerificationRequest,
-    EmailVerificationResponse,
-)
-
-# Feed models
-from backend.core.models.feed import (
-    PostCreate,
-    PostUpdate,
-    PostResponse,
-    PostListResponse,
-    LikeResponse,
-    LikeRequest,
-)
-
-# Housing models
-from backend.core.models.housing import (
-    HousingListingCreate,
-    HousingListingUpdate,
-    HousingListingResponse,
-    HousingListResponse,
-    HousingSearchFilters,
-    HousingLikeResponse,
-    PropertyType,
+    TokenResponse,
+    UserLoginRequest,
+    UserRegistrationRequest,
+    UserResponse,
 )
 
 # Chat models
 from backend.core.models.chat import (
-    MessageCreate,
-    MessageResponse,
-    ConversationCreate,
-    ConversationResponse,
-    ConversationListResponse,
-    MessageListResponse,
-    MarkReadRequest,
     ChatSearchRequest,
-    EncryptionKey,
-    MessageUpdateResponse,
+    ConversationCreate,
     ConversationDetailResponse,
+    ConversationListResponse,
+    ConversationResponse,
+    EncryptionKey,
+    MarkReadRequest,
+    MessageCreate,
+    MessageListResponse,
+    MessageResponse,
+    MessageUpdateResponse,
 )
 
-# Profile models
-from backend.core.models.profile import (
-    ProfileUpdate,
-    ProfileResponse,
-    PublicProfileResponse,
-    ProfileSearchRequest,
-    ProfileListResponse,
-    ProfileStatsResponse,
-    ProfilePictureUploadResponse,
+# Feed models
+from backend.core.models.feed import (
+    LikeRequest,
+    LikeResponse,
+    PostCreate,
+    PostListResponse,
+    PostResponse,
+    PostUpdate,
+)
+
+# Housing models
+from backend.core.models.housing import (
+    HousingLikeResponse,
+    HousingListingCreate,
+    HousingListingResponse,
+    HousingListingUpdate,
+    HousingListResponse,
+    HousingSearchFilters,
+    PropertyType,
 )
 
 # Olive AI models
 from backend.core.models.olive import (
-    OliveMessageCreate,
-    OliveMessageResponse,
-    OliveConversationCreate,
-    OliveConversationResponse,
-    OliveConversationListResponse,
-    OliveConversationDetailResponse,
+    MessageRole,
     OliveChatRequest,
     OliveChatResponse,
+    OliveConversationCreate,
+    OliveConversationDetailResponse,
+    OliveConversationListResponse,
+    OliveConversationResponse,
     OliveConversationUpdateRequest,
-    MessageRole,
+    OliveMessageCreate,
+    OliveMessageResponse,
+)
+
+# Profile models
+from backend.core.models.profile import (
+    ProfileListResponse,
+    ProfilePictureUploadResponse,
+    ProfileResponse,
+    ProfileSearchRequest,
+    ProfileStatsResponse,
+    ProfileUpdate,
+    PublicProfileResponse,
+)
+
+# University models
+from backend.core.models.university import (
+    EmailVerificationRequest as UniversityEmailVerificationRequest,
+)
+from backend.core.models.university import (
+    EmailVerificationResponse,
+    UniversityBase,
+    UniversityCreate,
+    UniversityResponse,
 )
 
 __all__ = [

@@ -15,3 +15,6 @@ pytest-asyncio
 black
 flake8
 email-validator
+pre-commit
+autoflake
+autopep8

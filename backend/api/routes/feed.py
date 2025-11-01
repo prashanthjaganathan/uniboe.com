@@ -6,24 +6,25 @@ Endpoints for creating, reading, updating, and deleting posts, and managing like
 
 from typing import Optional
 from uuid import UUID
-from fastapi import APIRouter, HTTPException, status, Depends, Query
-from backend.core.models.feed import (
-    PostCreate,
-    PostUpdate,
-    PostResponse,
-    PostListResponse,
-    LikeResponse,
-)
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+
+from backend.api.dependencies.auth import get_current_user, get_optional_current_user
 from backend.core.models.auth import UserResponse
+from backend.core.models.feed import (
+    LikeResponse,
+    PostCreate,
+    PostListResponse,
+    PostResponse,
+    PostUpdate,
+)
 from backend.core.services.feed import (
-    get_feed_service,
     FeedService,
     PostNotFoundError,
     UnauthorizedError,
     ValidationError,
+    get_feed_service,
 )
-from backend.api.dependencies.auth import get_current_user, get_optional_current_user
-
 
 # Create router
 router = APIRouter(
@@ -42,26 +43,26 @@ router = APIRouter(
 async def create_post(
     post_data: PostCreate,
     current_user: UserResponse = Depends(get_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ) -> PostResponse:
     """
     Create a new post in the feed.
-    
+
     Requires authentication. At least one of content or media must be provided.
-    
+
     Args:
         post_data: Post creation data (content and/or media)
         current_user: Authenticated user
         feed_service: Feed service dependency
-    
+
     Returns:
         PostResponse: Created post with user information
-    
+
     Raises:
         HTTPException 400: Invalid post data
         HTTPException 401: Not authenticated
         HTTPException 500: Server error
-    
+
     Example:
         >>> POST /api/feed/posts
         >>> {
@@ -71,21 +72,15 @@ async def create_post(
         >>> }
     """
     try:
-        post = await feed_service.create_post(
-            user_id=current_user.id,
-            post_data=post_data
-        )
+        post = await feed_service.create_post(user_id=current_user.id, post_data=post_data)
         return PostResponse(**post)
-        
+
     except ValidationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create post: {str(e)}"
+            detail=f"Failed to create post: {str(e)}",
         )
 
 
@@ -100,26 +95,26 @@ async def get_feed(
     page: int = Query(1, ge=1, description="Page number (starts at 1)"),
     page_size: int = Query(20, ge=1, le=100, description="Posts per page (max 100)"),
     current_user: Optional[UserResponse] = Depends(get_optional_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ) -> PostListResponse:
     """
     Get paginated feed of posts.
-    
+
     Authentication is optional. If authenticated, excludes user's own posts
     and includes like status for each post.
-    
+
     Args:
         page: Page number (default 1)
         page_size: Number of posts per page (default 20, max 100)
         current_user: Optional authenticated user
         feed_service: Feed service dependency
-    
+
     Returns:
         PostListResponse: Paginated list of posts
-    
+
     Example:
         >>> GET /api/feed?page=1&page_size=20
-        
+
         Response:
         {
           "posts": [...],
@@ -135,21 +130,21 @@ async def get_feed(
             current_user_id=current_user_id,
             page=page,
             page_size=page_size,
-            exclude_own_posts=bool(current_user_id)
+            exclude_own_posts=bool(current_user_id),
         )
-        
+
         return PostListResponse(
             posts=[PostResponse(**post) for post in feed_data["posts"]],
             total=feed_data["total"],
             page=feed_data["page"],
             page_size=feed_data["page_size"],
-            has_more=feed_data["has_more"]
+            has_more=feed_data["has_more"],
         )
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch feed: {str(e)}"
+            detail=f"Failed to fetch feed: {str(e)}",
         )
 
 
@@ -163,45 +158,39 @@ async def get_feed(
 async def get_post(
     post_id: UUID,
     current_user: Optional[UserResponse] = Depends(get_optional_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ) -> PostResponse:
     """
     Get a single post by ID.
-    
+
     Authentication is optional. If authenticated, includes like status.
-    
+
     Args:
         post_id: Post unique identifier
         current_user: Optional authenticated user
         feed_service: Feed service dependency
-    
+
     Returns:
         PostResponse: Post with full details
-    
+
     Raises:
         HTTPException 404: Post not found
         HTTPException 500: Server error
-    
+
     Example:
         >>> GET /api/feed/posts/123e4567-e89b-12d3-a456-426614174000
     """
     try:
         current_user_id = current_user.id if current_user else None
-        post = await feed_service.get_post_by_id(
-            post_id=post_id,
-            current_user_id=current_user_id
-        )
+        post = await feed_service.get_post_by_id(post_id=post_id, current_user_id=current_user_id)
         return PostResponse(**post)
-        
+
     except PostNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch post: {str(e)}"
+            detail=f"Failed to fetch post: {str(e)}",
         )
 
 
@@ -217,47 +206,44 @@ async def get_user_posts(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Posts per page"),
     current_user: Optional[UserResponse] = Depends(get_optional_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ) -> PostListResponse:
     """
     Get all posts by a specific user.
-    
+
     Authentication is optional. If authenticated, includes like status.
-    
+
     Args:
         user_id: User's unique identifier
         page: Page number (default 1)
         page_size: Posts per page (default 20, max 100)
         current_user: Optional authenticated user
         feed_service: Feed service dependency
-    
+
     Returns:
         PostListResponse: Paginated list of user's posts
-    
+
     Example:
         >>> GET /api/feed/users/456e7890-e89b-12d3-a456-426614174111/posts?page=1
     """
     try:
         current_user_id = current_user.id if current_user else None
         posts_data = await feed_service.get_user_posts(
-            user_id=user_id,
-            current_user_id=current_user_id,
-            page=page,
-            page_size=page_size
+            user_id=user_id, current_user_id=current_user_id, page=page, page_size=page_size
         )
-        
+
         return PostListResponse(
             posts=[PostResponse(**post) for post in posts_data["posts"]],
             total=posts_data["total"],
             page=posts_data["page"],
             page_size=posts_data["page_size"],
-            has_more=posts_data["has_more"]
+            has_more=posts_data["has_more"],
         )
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch user posts: {str(e)}"
+            detail=f"Failed to fetch user posts: {str(e)}",
         )
 
 
@@ -272,28 +258,28 @@ async def update_post(
     post_id: UUID,
     post_data: PostUpdate,
     current_user: UserResponse = Depends(get_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ) -> PostResponse:
     """
     Update an existing post.
-    
+
     Only the post owner can update it. Requires authentication.
-    
+
     Args:
         post_id: Post unique identifier
         post_data: Updated post data
         current_user: Authenticated user
         feed_service: Feed service dependency
-    
+
     Returns:
         PostResponse: Updated post
-    
+
     Raises:
         HTTPException 401: Not authenticated
         HTTPException 403: Not the post owner
         HTTPException 404: Post not found
         HTTPException 500: Server error
-    
+
     Example:
         >>> PUT /api/feed/posts/123e4567-e89b-12d3-a456-426614174000
         >>> {
@@ -302,31 +288,20 @@ async def update_post(
     """
     try:
         post = await feed_service.update_post(
-            post_id=post_id,
-            user_id=current_user.id,
-            update_data=post_data
+            post_id=post_id, user_id=current_user.id, update_data=post_data
         )
         return PostResponse(**post)
-        
+
     except PostNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except UnauthorizedError as e:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
     except ValidationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update post: {str(e)}"
+            detail=f"Failed to update post: {str(e)}",
         )
 
 
@@ -339,49 +314,40 @@ async def update_post(
 async def delete_post(
     post_id: UUID,
     current_user: UserResponse = Depends(get_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ):
     """
     Delete a post.
-    
+
     Only the post owner can delete it. Requires authentication.
     All associated likes will be deleted automatically (CASCADE).
-    
+
     Args:
         post_id: Post unique identifier
         current_user: Authenticated user
         feed_service: Feed service dependency
-    
+
     Raises:
         HTTPException 401: Not authenticated
         HTTPException 403: Not the post owner
         HTTPException 404: Post not found
         HTTPException 500: Server error
-    
+
     Example:
         >>> DELETE /api/feed/posts/123e4567-e89b-12d3-a456-426614174000
     """
     try:
-        await feed_service.delete_post(
-            post_id=post_id,
-            user_id=current_user.id
-        )
+        await feed_service.delete_post(post_id=post_id, user_id=current_user.id)
         return None
-        
+
     except PostNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except UnauthorizedError as e:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete post: {str(e)}"
+            detail=f"Failed to delete post: {str(e)}",
         )
 
 
@@ -395,46 +361,40 @@ async def delete_post(
 async def like_post(
     post_id: UUID,
     current_user: UserResponse = Depends(get_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ) -> LikeResponse:
     """
     Like a post.
-    
+
     Requires authentication. If the post is already liked by the user,
     returns the existing like (idempotent operation).
-    
+
     Args:
         post_id: Post unique identifier
         current_user: Authenticated user
         feed_service: Feed service dependency
-    
+
     Returns:
         LikeResponse: Like data with user information
-    
+
     Raises:
         HTTPException 401: Not authenticated
         HTTPException 404: Post not found
         HTTPException 500: Server error
-    
+
     Example:
         >>> POST /api/feed/posts/123e4567-e89b-12d3-a456-426614174000/like
     """
     try:
-        like = await feed_service.like_post(
-            post_id=post_id,
-            user_id=current_user.id
-        )
+        like = await feed_service.like_post(post_id=post_id, user_id=current_user.id)
         return LikeResponse(**like)
-        
+
     except PostNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to like post: {str(e)}"
+            detail=f"Failed to like post: {str(e)}",
         )
 
 
@@ -447,37 +407,34 @@ async def like_post(
 async def unlike_post(
     post_id: UUID,
     current_user: UserResponse = Depends(get_current_user),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ):
     """
     Unlike a post.
-    
+
     Requires authentication. Removes the user's like from the post.
     Idempotent operation (succeeds even if not already liked).
-    
+
     Args:
         post_id: Post unique identifier
         current_user: Authenticated user
         feed_service: Feed service dependency
-    
+
     Raises:
         HTTPException 401: Not authenticated
         HTTPException 500: Server error
-    
+
     Example:
         >>> DELETE /api/feed/posts/123e4567-e89b-12d3-a456-426614174000/like
     """
     try:
-        await feed_service.unlike_post(
-            post_id=post_id,
-            user_id=current_user.id
-        )
+        await feed_service.unlike_post(post_id=post_id, user_id=current_user.id)
         return None
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to unlike post: {str(e)}"
+            detail=f"Failed to unlike post: {str(e)}",
         )
 
 
@@ -492,25 +449,25 @@ async def get_post_likes(
     post_id: UUID,
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(50, ge=1, le=100, description="Likes per page"),
-    feed_service: FeedService = Depends(get_feed_service)
+    feed_service: FeedService = Depends(get_feed_service),
 ) -> dict:
     """
     Get all users who liked a post.
-    
+
     Returns paginated list of likes with user information.
-    
+
     Args:
         post_id: Post unique identifier
         page: Page number (default 1)
         page_size: Likes per page (default 50, max 100)
         feed_service: Feed service dependency
-    
+
     Returns:
         dict: Paginated likes with user info
-    
+
     Example:
         >>> GET /api/feed/posts/123e4567-e89b-12d3-a456-426614174000/likes?page=1
-        
+
         Response:
         {
           "likes": [
@@ -528,23 +485,20 @@ async def get_post_likes(
     """
     try:
         likes_data = await feed_service.get_post_likes(
-            post_id=post_id,
-            page=page,
-            page_size=page_size
+            post_id=post_id, page=page, page_size=page_size
         )
-        
+
         # Convert likes to LikeResponse models
         return {
             "likes": [LikeResponse(**like) for like in likes_data["likes"]],
             "total": likes_data["total"],
             "page": likes_data["page"],
             "page_size": likes_data["page_size"],
-            "has_more": likes_data["has_more"]
+            "has_more": likes_data["has_more"],
         }
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch post likes: {str(e)}"
+            detail=f"Failed to fetch post likes: {str(e)}",
         )
-

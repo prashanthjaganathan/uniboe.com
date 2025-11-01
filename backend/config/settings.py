@@ -7,11 +7,12 @@ using Pydantic Settings for validation and type safety.
 
 from pathlib import Path
 from typing import List, Literal
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, field_validator, AnyUrl
 
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent  # Points to backend/
+
 
 class Settings(BaseSettings):
     """
@@ -50,9 +51,7 @@ class Settings(BaseSettings):
     )
 
     # Database Configuration (optional direct connection)
-    DATABASE_URL: str = Field(
-        default="", description="Direct PostgreSQL connection URL (optional)"
-    )
+    DATABASE_URL: str = Field(default="", description="Direct PostgreSQL connection URL (optional)")
 
     # External API Configuration
     HIPO_API_URL: str = Field(
@@ -89,4 +88,3 @@ class Settings(BaseSettings):
 
 # Global settings instance
 settings = Settings()
-

@@ -5,13 +5,13 @@ This module initializes the FastAPI application, configures middleware,
 and sets up all routes and endpoints.
 """
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from backend.config import settings
-from backend.api.routes import universities, auth, feed, housing, chat, profile, olive
-import uvicorn
 
+from backend.api.routes import auth, chat, feed, housing, olive, profile, universities
+from backend.config import settings
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -89,7 +89,7 @@ async def startup_event() -> None:
     Performs initialization tasks when the application starts.
     """
     print(f"🚀 Uniboe API starting in {settings.ENVIRONMENT} mode...")
-    print(f"📚 API Documentation: http://localhost:8000/docs")
+    print("📚 API Documentation: http://localhost:8000/docs")
 
 
 @app.on_event("shutdown")
@@ -112,4 +112,3 @@ if __name__ == "__main__":
         reload=settings.DEBUG,
         log_level="debug" if settings.DEBUG else "info",
     )
-

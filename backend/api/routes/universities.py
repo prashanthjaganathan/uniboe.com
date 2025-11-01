@@ -5,15 +5,16 @@ Endpoints for university verification and search functionality.
 """
 
 from typing import List
-from fastapi import APIRouter, HTTPException, Query, Path, status
+
+from fastapi import APIRouter, HTTPException, Path, Query, status
+
 from backend.core.models.university import (
-    UniversityResponse,
-    UniversityCreate,
     EmailVerificationRequest,
     EmailVerificationResponse,
+    UniversityCreate,
+    UniversityResponse,
 )
 from backend.core.services.universities import get_university_service
-
 
 # Create router
 router = APIRouter(
@@ -31,19 +32,19 @@ router = APIRouter(
 async def get_all_universities() -> List[UniversityResponse]:
     """
     Get all US universities from database.
-    
+
     Returns:
         List[UniversityResponse]: List of all universities
-    
+
     Raises:
         HTTPException: 500 if unable to fetch universities
     """
     try:
         service = get_university_service()
         universities = await service.get_all_universities()
-        
+
         return [UniversityResponse(**uni) for uni in universities]
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -63,28 +64,28 @@ async def verify_email(
 ) -> EmailVerificationResponse:
     """
     Verify if an email domain belongs to a US university.
-    
+
     Args:
         request: Email verification request
-    
+
     Returns:
         EmailVerificationResponse: Verification result
     """
     try:
         service = get_university_service()
         result = await service.verify_email_domain(request.email)
-        
+
         # Convert to response model
         university = None
         if result["university"]:
             university = UniversityResponse(**result["university"])
-        
+
         return EmailVerificationResponse(
             is_valid=result["is_valid"],
             university=university,
             message=result.get("message"),
         )
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -103,19 +104,19 @@ async def search_universities(
 ) -> List[UniversityResponse]:
     """
     Search universities by name.
-    
+
     Args:
         q: Search query string
-    
+
     Returns:
         List[UniversityResponse]: List of matching universities
     """
     try:
         service = get_university_service()
         results = await service.search_universities(q)
-        
+
         return [UniversityResponse(**uni) for uni in results]
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -134,28 +135,28 @@ async def get_university_by_domain(
 ) -> UniversityResponse:
     """
     Get university by exact domain match.
-    
+
     Args:
         domain: Domain name to search for
-    
+
     Returns:
         UniversityResponse: University details
-    
+
     Raises:
         HTTPException: 404 if university not found
     """
     try:
         service = get_university_service()
         university = await service.get_university_by_domain(domain)
-        
+
         if not university:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"University with domain '{domain}' not found",
             )
-        
+
         return UniversityResponse(**university)
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -177,16 +178,16 @@ async def create_university(
 ) -> UniversityResponse:
     """
     Create a new university.
-    
+
     Args:
         university: University data to create
-    
+
     Returns:
         UniversityResponse: Created university
-    
+
     Raises:
         HTTPException: 500 if creation fails
-    
+
     Note:
         This endpoint should be protected with admin authentication in production.
     """
@@ -198,9 +199,9 @@ async def create_university(
             country=university.country,
             state=university.state,
         )
-        
+
         return UniversityResponse(**result)
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

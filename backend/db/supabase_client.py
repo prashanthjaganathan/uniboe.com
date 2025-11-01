@@ -5,7 +5,8 @@ This module provides a configured Supabase client instance
 that can be imported and used throughout the application.
 """
 
-from supabase import create_client, Client
+from supabase import Client, create_client
+
 from backend.config import settings
 
 
@@ -38,4 +39,3 @@ supabase: Client = get_supabase_client()
 
 
 __all__ = ["supabase", "get_supabase_client"]
-

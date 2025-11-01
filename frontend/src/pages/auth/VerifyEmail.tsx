@@ -23,9 +23,12 @@ const VerifyEmail = () => {
         const response = await authService.verifyEmail(token);
         setStatus('success');
         setMessage(response.message || 'Email verified successfully!');
-      } catch (err: any) {
+      } catch (err: unknown) {
         setStatus('error');
-        setMessage(err.response?.data?.detail || 'Email verification failed');
+        const errorMessage = err && typeof err === 'object' && 'response' in err
+          ? (err as { response?: { data?: { detail?: string } } }).response?.data?.detail || 'Email verification failed'
+          : 'Email verification failed';
+        setMessage(errorMessage);
       }
     };
 

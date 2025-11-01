@@ -72,8 +72,8 @@ export const housingService = {
     await api.delete(`/housing/listings/${listingId}/like`);
   },
 
-  async getListingLikes(listingId: string, page: number = 1, pageSize: number = 50): Promise<any> {
-    const response = await api.get(`/housing/listings/${listingId}/likes`, {
+  async getListingLikes(listingId: string, page: number = 1, pageSize: number = 50): Promise<{ likes: unknown[]; total: number; page: number; page_size: number }> {
+    const response = await api.get<{ likes: unknown[]; total: number; page: number; page_size: number }>(`/housing/listings/${listingId}/likes`, {
       params: { page, page_size: pageSize }
     });
     return response.data;

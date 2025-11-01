@@ -37,8 +37,11 @@ const Feed = () => {
       const newPost = await feedService.createPost({ content: newPostContent });
       setPosts([newPost, ...posts]);
       setNewPostContent('');
-    } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to create post');
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail || 'Failed to create post'
+        : 'Failed to create post';
+      alert(errorMessage);
     } finally {
       setCreatingPost(false);
     }

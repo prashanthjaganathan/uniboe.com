@@ -3,7 +3,6 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
 import { oliveService } from '@/services/olive.service';
 import { OliveConversationResponse, OliveMessageResponse } from '@/types/olive.types';
 import { Sparkles, Plus, Trash2, Send } from 'lucide-react';
@@ -39,7 +38,8 @@ const OliveChat = () => {
       setInputMessage(query);
       handleSendMessage(query);
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, conversationId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -100,10 +100,13 @@ const OliveChat = () => {
         navigate(`/olive/chat/${response.conversation_id}`);
         loadConversations();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to send message:', error);
       setCurrentMessages(prev => prev.filter(m => m.id !== tempUserMessage.id));
-      alert(error.response?.data?.detail || 'Failed to send message');
+      const errorMessage = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail || 'Failed to send message'
+        : 'Failed to send message';
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { housingService } from '@/services/housing.service';
 import { HousingListingResponse } from '@/types/housing.types';
-import { Search, Bed, Bath, MapPin, DollarSign } from 'lucide-react';
+import { Search, Bed, Bath, MapPin } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 

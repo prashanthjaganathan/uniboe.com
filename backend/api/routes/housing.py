@@ -5,10 +5,10 @@ Endpoints for creating, reading, updating, and deleting housing listings,
 managing search and filters, and handling likes.
 """
 
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 
 from backend.api.dependencies.auth import get_current_user, get_optional_current_user
 from backend.core.models.auth import UserResponse
@@ -33,6 +33,107 @@ router = APIRouter(
     prefix="/housing",
     tags=["Housing"],
 )
+
+
+@router.post(
+    "/upload-media",
+    response_model=dict,
+    status_code=status.HTTP_200_OK,
+    summary="Upload housing images",
+    description="Upload images for a housing listing. Returns URLs.",
+)
+async def upload_housing_media(
+    files: List[UploadFile] = File(..., description="Image files (max 10, max 10MB each)"),
+    current_user: UserResponse = Depends(get_current_user),
+    housing_service: HousingService = Depends(get_housing_service),
+) -> dict:
+    """
+    Upload images for housing listings.
+
+    Files stored in: housing-images/{user_id}/{unique_filename}
+    Returns public URLs to use when creating/updating listings.
+
+    Supported formats: jpg, jpeg, png, gif, webp
+    Max 10 images, 10MB each
+
+    Args:
+        files: List of image files
+        current_user: Authenticated user
+        housing_service: Housing service dependency
+
+    Returns:
+        dict: image_urls array and count
+
+    Example Response:
+        {
+          "image_urls": [
+            "https://.../housing-images/user-id/abc.jpg"
+          ],
+          "count": 1
+        }
+    """
+    try:
+        # Read files and prepare for service layer
+        file_data = []
+        for file in files:
+            content = await file.read()
+            file_data.append((content, file.content_type, file.filename))
+
+        # Delegate to service layer
+        result = await housing_service.upload_housing_media(
+            user_id=current_user.id, files=file_data
+        )
+
+        return result
+
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Housing media upload failed: {str(e)}",
+        )
+
+
+@router.delete(
+    "/media",
+    response_model=dict,
+    status_code=status.HTTP_200_OK,
+    summary="Delete housing image",
+    description="Delete an image file from storage.",
+)
+async def delete_housing_media(
+    image_url: str = Query(..., description="Public URL of the image to delete"),
+    current_user: UserResponse = Depends(get_current_user),
+    housing_service: HousingService = Depends(get_housing_service),
+) -> dict:
+    """
+    Delete a housing image from storage.
+
+    User must own the file.
+
+    Args:
+        image_url: Public URL of the image
+        current_user: Authenticated user
+        housing_service: Housing service dependency
+
+    Returns:
+        Success message
+    """
+    try:
+        await housing_service.delete_housing_media(user_id=current_user.id, image_url=image_url)
+
+        return {"message": "Housing image deleted successfully", "image_url": image_url}
+
+    except UnauthorizedError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete housing image: {str(e)}",
+        )
 
 
 @router.post(

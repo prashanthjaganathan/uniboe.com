@@ -176,16 +176,33 @@ class AuthService:
 
             # Step 4: Return user data and tokens
             print("✅ DEBUG: Registration successful! Returning user data...")
+
+            # Check if email confirmation is required
+            if not auth_response.session:
+                print("📧 DEBUG: No session - email confirmation required")
+                return {
+                    "session": None,
+                    "user": UserResponse(
+                        id=UUID(str(user.id)),
+                        email=registration_data.university_email,
+                        full_name=registration_data.full_name,
+                        university_id=UUID(str(university["id"])),
+                        university_email=registration_data.university_email,
+                        profile_picture_url=None,
+                        is_verified=False,
+                        created_at=datetime.utcnow(),
+                    ),
+                }
+
+            # Session exists - return tokens
             return {
-                "access_token": (
-                    auth_response.session.access_token if auth_response.session else None
-                ),
+                "access_token": auth_response.session.access_token,
                 "token_type": "bearer",
                 "user": UserResponse(
                     id=UUID(str(user.id)),
                     email=registration_data.university_email,
                     full_name=registration_data.full_name,
-                    university_id=UUID(str(university["id"])),  # Also convert here
+                    university_id=UUID(str(university["id"])),
                     university_email=registration_data.university_email,
                     profile_picture_url=None,
                     is_verified=False,

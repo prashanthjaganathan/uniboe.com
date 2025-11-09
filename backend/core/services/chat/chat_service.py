@@ -72,10 +72,10 @@ class ChatService:
                 supabase.table("conversations")
                 .select(
                     "*, "
-                    "profiles!conversations_participant_1_id_fkey("
+                    "participant_1:profiles!conversations_participant_1_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     "),"
-                    "profiles!conversations_participant_2_id_fkey("
+                    "participant_2:profiles!conversations_participant_2_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     ")"
                 )
@@ -94,25 +94,34 @@ class ChatService:
                 "participant_2_id": str(p2_id),
             }
 
-            new_conv_response = (
-                supabase.table("conversations")
-                .insert(new_conv_data)
-                .select(
-                    "*, "
-                    "profiles!conversations_participant_1_id_fkey("
-                    "id, full_name, profile_picture_url, universities(name)"
-                    "),"
-                    "profiles!conversations_participant_2_id_fkey("
-                    "id, full_name, profile_picture_url, universities(name)"
-                    ")"
-                )
-                .execute()
-            )
+            # Create new conversation (INSERT first)
+            new_conv_response = supabase.table("conversations").insert(new_conv_data).execute()
 
             if not new_conv_response.data:
                 raise Exception("Failed to create conversation")
 
-            return self._format_conversation_response(new_conv_response.data[0], user_id)
+            created_conv = new_conv_response.data[0]
+
+            # Then SELECT with joins to get full participant info
+            full_conv_response = (
+                supabase.table("conversations")
+                .select(
+                    "*, "
+                    "participant_1:profiles!conversations_participant_1_id_fkey("
+                    "id, full_name, profile_picture_url, universities(name)"
+                    "),"
+                    "participant_2:profiles!conversations_participant_2_id_fkey("
+                    "id, full_name, profile_picture_url, universities(name)"
+                    ")"
+                )
+                .eq("id", created_conv["id"])
+                .execute()
+            )
+
+            if not full_conv_response.data:
+                raise Exception("Failed to fetch created conversation")
+
+            return self._format_conversation_response(full_conv_response.data[0], user_id)
 
         except InvalidParticipantError:
             raise
@@ -143,10 +152,10 @@ class ChatService:
                 supabase.table("conversations")
                 .select(
                     "*, "
-                    "profiles!conversations_participant_1_id_fkey("
+                    "participant_1:profiles!conversations_participant_1_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     "),"
-                    "profiles!conversations_participant_2_id_fkey("
+                    "participant_2:profiles!conversations_participant_2_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     ")"
                 )
@@ -158,10 +167,10 @@ class ChatService:
                 supabase.table("conversations")
                 .select(
                     "*, "
-                    "profiles!conversations_participant_1_id_fkey("
+                    "participant_1:profiles!conversations_participant_1_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     "),"
-                    "profiles!conversations_participant_2_id_fkey("
+                    "participant_2:profiles!conversations_participant_2_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     ")"
                 )
@@ -219,10 +228,10 @@ class ChatService:
                 supabase.table("conversations")
                 .select(
                     "*, "
-                    "profiles!conversations_participant_1_id_fkey("
+                    "participant_1:profiles!conversations_participant_1_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     "),"
-                    "profiles!conversations_participant_2_id_fkey("
+                    "participant_2:profiles!conversations_participant_2_id_fkey("
                     "id, full_name, profile_picture_url, universities(name)"
                     ")"
                 )
@@ -761,22 +770,17 @@ class ChatService:
     def _format_conversation_response(self, conv: Dict[str, Any], user_id: UUID) -> Dict[str, Any]:
         """Format conversation for API response."""
         # Determine which participant is "other"
-        other_id = (
-            conv["participant_2_id"]
-            if conv["participant_1_id"] == str(user_id)
-            else conv["participant_1_id"]
-        )
+        is_user_participant_1 = conv["participant_1_id"] == str(user_id)
 
-        # Get other participant's info from the join
-        if conv["participant_1_id"] == other_id:
-            other_profile = (
-                conv.get("profiles", {}) if isinstance(conv.get("profiles"), dict) else {}
-            )
+        # Get the correct participant profile based on aliases
+        if is_user_participant_1:
+            # User is participant_1, so other is participant_2
+            other_profile = conv.get("participant_2", {})
+            other_id = conv["participant_2_id"]
         else:
-            # This is a simplification; in practice you'd get the correct profile
-            other_profile = (
-                conv.get("profiles", {}) if isinstance(conv.get("profiles"), dict) else {}
-            )
+            # User is participant_2, so other is participant_1
+            other_profile = conv.get("participant_1", {})
+            other_id = conv["participant_1_id"]
 
         other_participant = {
             "id": UUID(other_id),

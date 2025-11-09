@@ -6,8 +6,8 @@ updating, deletion, search, and likes.
 """
 
 from datetime import datetime
-from typing import Any, Dict, Optional
-from uuid import UUID
+from typing import Any, Dict, List, Optional, Tuple
+from uuid import UUID, uuid4
 
 from backend.core.models.housing import (
     HousingLikeResponse,
@@ -36,6 +36,131 @@ class HousingService:
     """
     Service for managing housing listings and likes.
     """
+
+    async def upload_housing_media(
+        self, user_id: UUID, files: List[Tuple[bytes, str, str]]
+    ) -> Dict[str, Any]:
+        """
+        Upload image files for housing listings to Supabase Storage.
+
+        Args:
+            user_id: ID of the user uploading files
+            files: List of tuples (file_content, content_type, filename)
+
+        Returns:
+            Dict containing image_urls and count
+
+        Raises:
+            ValidationError: If file validation fails or upload fails
+        """
+        try:
+            # Validate file count (max 10 images for housing)
+            if len(files) > 10:
+                raise ValidationError("Maximum 10 images allowed per listing")
+
+            # Allowed MIME types (images only)
+            allowed_types = {
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+                "image/gif",
+                "image/webp",
+            }
+
+            image_urls = []
+            uploaded_paths = []
+
+            for file_content, content_type, filename in files:
+                # Validate MIME type
+                if content_type not in allowed_types:
+                    raise ValidationError(
+                        f"File type '{content_type}' not allowed. "
+                        f"Supported: images (jpg, png, gif, webp)"
+                    )
+
+                # Validate file size (10MB max)
+                max_size = 10 * 1024 * 1024  # 10MB
+                if len(file_content) > max_size:
+                    raise ValidationError(f"File '{filename}' exceeds 10MB limit")
+
+                # Generate unique filename
+                file_ext = filename.split(".")[-1] if "." in filename else "jpg"
+                unique_filename = f"{uuid4()}.{file_ext}"
+
+                # Storage path: user_id/filename
+                storage_path = f"{user_id}/{unique_filename}"
+
+                try:
+                    # Upload to Supabase Storage
+                    supabase.storage.from_("housing-images").upload(
+                        path=storage_path,
+                        file=file_content,
+                        file_options={"content-type": content_type},
+                    )
+
+                    # Get public URL
+                    public_url = supabase.storage.from_("housing-images").get_public_url(
+                        storage_path
+                    )
+
+                    image_urls.append(public_url)
+                    uploaded_paths.append(storage_path)
+
+                except Exception as upload_error:
+                    # Cleanup: delete any already uploaded files
+                    for path in uploaded_paths:
+                        try:
+                            supabase.storage.from_("housing-images").remove([path])
+                        except Exception:
+                            pass
+
+                    raise ValidationError(f"Upload failed for '{filename}': {str(upload_error)}")
+
+            return {
+                "image_urls": image_urls,
+                "count": len(image_urls),
+            }
+
+        except ValidationError:
+            raise
+        except Exception as e:
+            raise ValidationError(f"Housing media upload failed: {str(e)}")
+
+    async def delete_housing_media(self, user_id: UUID, image_url: str) -> bool:
+        """
+        Delete a housing image file from Supabase Storage.
+
+        Args:
+            user_id: ID of the user (must own the file)
+            image_url: Public URL of the image file
+
+        Returns:
+            bool: True if successful
+
+        Raises:
+            UnauthorizedError: If user doesn't own the file
+            ValidationError: If deletion fails
+        """
+        try:
+            # Extract storage path from URL
+            if f"housing-images/{user_id}/" not in image_url:
+                raise UnauthorizedError("You can only delete your own housing images")
+
+            path_parts = image_url.split("housing-images/")
+            if len(path_parts) < 2:
+                raise ValidationError("Invalid image URL")
+
+            storage_path = path_parts[1].split("?")[0]
+
+            # Delete from storage
+            supabase.storage.from_("housing-images").remove([storage_path])
+
+            return True
+
+        except (UnauthorizedError, ValidationError):
+            raise
+        except Exception as e:
+            raise ValidationError(f"Failed to delete housing image: {str(e)}")
 
     async def create_listing(
         self, user_id: UUID, listing_data: HousingListingCreate

@@ -1,59 +1,40 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-build/
-dist/
-*.egg-info/
-.pytest_cache/
-
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-*.env
-
-# IDE
-.vscode/
-.idea/
+s# OS
+.DS_Store
+Thumbs.db
 *.swp
 *.swo
 *~
 
-# OS
-.DS_Store
-Thumbs.db
+# IDE
+.vscode/
+.idea/
+*.code-workspace
 
-# Build outputs
-frontend/dist/
-frontend/build/
-backend/.pytest_cache/
+# Environment
+.env
+.env.local
+.env.*.local
 
 # Logs
 *.log
 logs/
+
+# Pre-commit
+.secrets.baseline
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
 
-# Coverage
-.coverage
-coverage/
-htmlcov/
+# Frontend
+node_modules/
 
-# Others
+# Cache
+.vscode/
 .cursor/

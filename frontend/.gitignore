@@ -9,7 +9,6 @@ build/
 .env
 .env.local
 .env.production
-
 # IDE
 .vscode/
 .idea/
@@ -19,4 +18,5 @@ build/
 
 # Logs
 *.log
+
 

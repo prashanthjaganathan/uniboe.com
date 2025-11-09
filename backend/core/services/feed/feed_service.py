@@ -4,8 +4,8 @@ Feed service.
 Handles all post and like operations including CRUD, feed generation, and engagement.
 """
 
-from typing import Any, Dict, Optional
-from uuid import UUID
+from typing import Any, Dict, List, Optional, Tuple
+from uuid import UUID, uuid4
 
 from backend.core.models.feed import PostCreate, PostUpdate
 from backend.db import supabase
@@ -73,6 +73,156 @@ class FeedService:
             if isinstance(e, (ValidationError, PostNotFoundError)):
                 raise
             raise ValidationError(f"Failed to create post: {str(e)}")
+
+    async def upload_media(
+        self, user_id: UUID, files: List[Tuple[bytes, str, str]]
+    ) -> Dict[str, Any]:
+        """
+        Upload media files to Supabase Storage.
+
+        Args:
+            user_id: ID of the user uploading files
+            files: List of tuples (file_content, content_type, filename)
+
+        Returns:
+            Dict containing media_urls, media_types, and count
+
+        Raises:
+            ValidationError: If file validation fails or upload fails
+
+        Example:
+            >>> service = FeedService()
+            >>> files = [(content, "image/jpeg", "photo.jpg")]
+            >>> result = await service.upload_media(user_id, files)
+            >>> print(result["media_urls"])
+        """
+        try:
+            # Validate file count
+            if len(files) > 5:
+                raise ValidationError("Maximum 5 files allowed per post")
+
+            # Allowed MIME types
+            allowed_images = {
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+                "image/gif",
+                "image/webp",
+            }
+            allowed_videos = {
+                "video/mp4",
+                "video/quicktime",
+                "video/x-msvideo",
+                "video/avi",
+            }
+            allowed_types = allowed_images | allowed_videos
+
+            media_urls = []
+            media_types = []
+            uploaded_paths = []  # Track paths for cleanup on error
+
+            for file_content, content_type, filename in files:
+                # Validate MIME type
+                if content_type not in allowed_types:
+                    raise ValidationError(
+                        f"File type '{content_type}' not allowed. "
+                        f"Supported: images (jpg, png, gif, webp) and videos (mp4, mov, avi)"
+                    )
+
+                # Validate file size (50MB max)
+                max_size = 50 * 1024 * 1024  # 50MB
+                if len(file_content) > max_size:
+                    raise ValidationError(f"File '{filename}' exceeds 50MB limit")
+
+                # Generate unique filename
+                file_ext = filename.split(".")[-1] if "." in filename else "jpg"
+                unique_filename = f"{uuid4()}.{file_ext}"
+
+                # Storage path: user_id/filename
+                storage_path = f"{user_id}/{unique_filename}"
+
+                try:
+                    # Upload to Supabase Storage
+                    supabase.storage.from_("post-media").upload(
+                        path=storage_path,
+                        file=file_content,
+                        file_options={"content-type": content_type},
+                    )
+
+                    # Get public URL
+                    public_url = supabase.storage.from_("post-media").get_public_url(storage_path)
+
+                    media_urls.append(public_url)
+                    uploaded_paths.append(storage_path)
+
+                    # Determine media type
+                    if content_type in allowed_images:
+                        media_types.append("image")
+                    else:
+                        media_types.append("video")
+
+                except Exception as upload_error:
+                    # Cleanup: delete any already uploaded files
+                    for path in uploaded_paths:
+                        try:
+                            supabase.storage.from_("post-media").remove([path])
+                        except Exception:
+                            pass  # Ignore cleanup errors
+
+                    raise ValidationError(f"Upload failed for '{filename}': {str(upload_error)}")
+
+            return {
+                "media_urls": media_urls,
+                "media_types": media_types,
+                "count": len(media_urls),
+            }
+
+        except ValidationError:
+            raise
+        except Exception as e:
+            raise ValidationError(f"Media upload failed: {str(e)}")
+
+    async def delete_media(self, user_id: UUID, media_url: str) -> bool:
+        """
+        Delete a media file from Supabase Storage.
+
+        Args:
+            user_id: ID of the user (must own the file)
+            media_url: Public URL of the media file
+
+        Returns:
+            bool: True if successful
+
+        Raises:
+            UnauthorizedError: If user doesn't own the file
+            ValidationError: If deletion fails
+
+        Example:
+            >>> service = FeedService()
+            >>> success = await service.delete_media(user_id, media_url)
+        """
+        try:
+            # Extract storage path from URL
+            # URL format: https://.../storage/v1/object/public/post-media/{user_id}/{filename}
+            if f"post-media/{user_id}/" not in media_url:
+                raise UnauthorizedError("You can only delete your own media files")
+
+            # Extract the path after 'post-media/'
+            path_parts = media_url.split("post-media/")
+            if len(path_parts) < 2:
+                raise ValidationError("Invalid media URL")
+
+            storage_path = path_parts[1].split("?")[0]  # Remove query params if any
+
+            # Delete from storage
+            supabase.storage.from_("post-media").remove([storage_path])
+
+            return True
+
+        except (UnauthorizedError, ValidationError):
+            raise
+        except Exception as e:
+            raise ValidationError(f"Failed to delete media: {str(e)}")
 
     async def get_feed(
         self,

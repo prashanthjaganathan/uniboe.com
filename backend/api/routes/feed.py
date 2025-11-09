@@ -4,10 +4,10 @@ Feed API routes.
 Endpoints for creating, reading, updating, and deleting posts, and managing likes.
 """
 
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 
 from backend.api.dependencies.auth import get_current_user, get_optional_current_user
 from backend.core.models.auth import UserResponse
@@ -31,6 +31,122 @@ router = APIRouter(
     prefix="/feed",
     tags=["Feed"],
 )
+
+
+@router.post(
+    "/upload-media",
+    response_model=dict,
+    status_code=status.HTTP_200_OK,
+    summary="Upload media files for posts",
+    description="Upload images/videos to Supabase Storage. Returns public URLs.",
+)
+async def upload_media(
+    files: List[UploadFile] = File(..., description="Media files (max 5, max 50MB each)"),
+    current_user: UserResponse = Depends(get_current_user),
+    feed_service: FeedService = Depends(get_feed_service),
+) -> dict:
+    """
+    Upload media files to Supabase Storage.
+
+    Files are stored in: post-media/{user_id}/{unique_filename}
+    Returns public URLs that can be used when creating posts.
+
+    Supported formats:
+    - Images: jpg, jpeg, png, gif, webp
+    - Videos: mp4, mov, avi
+
+    Args:
+        files: List of files to upload (max 5, max 50MB each)
+        current_user: Authenticated user
+        feed_service: Feed service dependency
+
+    Returns:
+        dict: Contains media_urls, media_types, and count
+
+    Raises:
+        HTTPException 400: Invalid file type or size
+        HTTPException 401: Not authenticated
+        HTTPException 500: Upload failed
+
+    Example:
+        >>> POST /api/feed/upload-media
+        >>> Content-Type: multipart/form-data
+        >>> files: [image1.jpg, video1.mp4]
+
+        Response:
+        {
+          "media_urls": ["https://.../abc123.jpg"],
+          "media_types": ["image"],
+          "count": 1
+        }
+    """
+    try:
+        # Read files and prepare for service layer
+        file_data = []
+        for file in files:
+            content = await file.read()
+            file_data.append((content, file.content_type, file.filename))
+
+        # Delegate to service layer
+        result = await feed_service.upload_media(user_id=current_user.id, files=file_data)
+
+        return result
+
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Media upload failed: {str(e)}",
+        )
+
+
+@router.delete(
+    "/media",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete media file",
+    description="Delete a media file from storage. Only the owner can delete.",
+)
+async def delete_media(
+    media_url: str = Query(..., description="Public URL of the media to delete"),
+    current_user: UserResponse = Depends(get_current_user),
+    feed_service: FeedService = Depends(get_feed_service),
+):
+    """
+    Delete a media file from Supabase Storage.
+
+    User must be the owner of the file (must be in their folder).
+    Useful for cleaning up media from deleted posts or before post creation.
+
+    Args:
+        media_url: Public URL of the media file
+        current_user: Authenticated user
+        feed_service: Feed service dependency
+
+    Raises:
+        HTTPException 401: Not authenticated
+        HTTPException 403: Not the file owner
+        HTTPException 500: Deletion failed
+
+    Example:
+        >>> DELETE /api/feed/media?media_url=https://.../abc123.jpg
+    """
+    try:
+        response = await feed_service.delete_media(user_id=current_user.id, media_url=media_url)
+        if response:
+            return {"message": "Media deleted successfully"}
+        else:
+            return {"message": "Failed to delete media"}
+
+    except UnauthorizedError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete media: {str(e)}",
+        )
 
 
 @router.post(

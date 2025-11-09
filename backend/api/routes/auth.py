@@ -87,15 +87,21 @@ async def register(request: UserRegistrationRequest) -> TokenResponse:
 
         # Check if session exists - Supabase might require email confirmation
         if not result.get("session"):
-            return {
-                "message": (
+            return RegistrationConfirmationResponse(
+                message=(
                     "User registered successfully. "
                     "Please check your email to confirm your account."
                 ),
-                "user": result["user"],
-                "email_confirmation_required": True,
-            }
+                user=result["user"],
+                email_confirmation_required=True,
+            )
 
+        # Session exists - return token response
+        return TokenResponse(
+            access_token=result["access_token"],
+            token_type=result["token_type"],
+            user=result["user"],
+        )
     except InvalidDomainError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

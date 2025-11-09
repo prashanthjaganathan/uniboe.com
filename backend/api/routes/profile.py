@@ -323,7 +323,7 @@ async def upload_profile_picture(
 
     Restrictions:
     - File types: image/jpeg, image/png, image/webp
-    - Max size: 2MB
+    - Max size: 20MB
 
     Args:
         file: Uploaded image file.
@@ -357,7 +357,7 @@ async def upload_profile_picture(
         contents = await file.read()
 
         # Validate file size (2MB)
-        max_size = 2 * 1024 * 1024  # 2MB in bytes
+        max_size = 20 * 1024 * 1024  # 20MB in bytes
         if len(contents) > max_size:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

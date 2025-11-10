@@ -32,7 +32,7 @@ repos:
 
   # Stage 3: Sort imports (after autoflake removes unused ones)
   - repo: https://github.com/pycqa/isort
-    rev: 7.0.0
+    rev: 5.13.2
     hooks:
       - id: isort
         files: ^backend/.*\.py$
@@ -67,13 +67,15 @@ repos:
         files: ^backend/.*\.py$
         args: [--config=backend/.flake8]
 
-  # Frontend hooks
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+  # Frontend hooks - use local prettier from package.json
+  - repo: local
     hooks:
       - id: prettier
+        name: prettier
+        entry: bash -c 'cd frontend && npx prettier --write "${@#frontend/}"' --
+        language: system
         files: ^frontend/.*\.(js|jsx|json|css|md|html)$
-        args: [--write, --print-width=100]
+        pass_filenames: true
 
   # Secrets check
   - repo: https://github.com/Yelp/detect-secrets

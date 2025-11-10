@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { base44 } from '@/api/backendAdapter';
+import { housingService } from '@/services/housing.service';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,8 +32,6 @@ import HousingFilters from '../components/housing/HousingFilters';
 import AddListingModal from '../components/housing/AddListingModal';
 
 export default function HousingPage() {
-  const [listings, setListings] = useState([]);
-  const [filteredListings, setFilteredListings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     priceMin: '',
@@ -43,64 +42,46 @@ export default function HousingPage() {
   });
   const [viewMode, setViewMode] = useState('list');
   const [showAddListing, setShowAddListing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadListings();
-  }, []);
+  const queryClient = useQueryClient();
 
-  const loadListings = async () => {
-    setIsLoading(true);
-    try {
-      const data = await base44.entities.Housing.list();
-      setListings(data);
-    } catch (error) {
-      console.error('Error loading listings:', error);
-      // Set empty array on error to prevent app crash
-      setListings([]);
-    }
-    setIsLoading(false);
+  // Build search filters for backend
+  const buildFilters = () => {
+    const searchFilters = {};
+    if (filters.priceMin) searchFilters.min_price = parseFloat(filters.priceMin);
+    if (filters.priceMax) searchFilters.max_price = parseFloat(filters.priceMax);
+    if (filters.propertyType !== 'all') searchFilters.property_type = filters.propertyType;
+    if (filters.bedrooms !== 'all') searchFilters.bedrooms = parseInt(filters.bedrooms);
+    if (filters.city !== 'all') searchFilters.city = filters.city;
+    return searchFilters;
   };
 
-  const applyFilters = useCallback(() => {
-    let filtered = listings.filter((listing) => {
-      const matchesSearch =
-        !searchTerm ||
-        listing.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        listing.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        listing.location?.toLowerCase().includes(searchTerm.toLowerCase());
+  // Fetch listings
+  const { data: listingsData, isLoading } = useQuery({
+    queryKey: ['housing', filters, searchTerm],
+    queryFn: async () => {
+      if (searchTerm) {
+        return await housingService.searchByLocation(searchTerm);
+      }
+      return await housingService.getListings(buildFilters());
+    },
+  });
 
-      const matchesPrice =
-        (!filters.priceMin || listing.price >= parseFloat(filters.priceMin)) &&
-        (!filters.priceMax || listing.price <= parseFloat(filters.priceMax));
+  const listings = listingsData?.listings ?? [];
+  const uniqueCities = [...new Set(listings.map((l) => l.city).filter(Boolean))];
 
-      const matchesType =
-        filters.propertyType === 'all' || listing.property_type === filters.propertyType;
-      const matchesBedrooms =
-        filters.bedrooms === 'all' || listing.bedrooms?.toString() === filters.bedrooms;
-      const matchesCity = filters.city === 'all' || listing.city === filters.city;
-
-      return matchesSearch && matchesPrice && matchesType && matchesBedrooms && matchesCity;
-    });
-
-    setFilteredListings(filtered);
-  }, [listings, searchTerm, filters]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
+  // Create listing mutation
+  const createListingMutation = useMutation({
+    mutationFn: (listingData) => housingService.createListing(listingData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['housing'] });
+      setShowAddListing(false);
+    },
+  });
 
   const handleAddListing = async (listingData) => {
-    try {
-      await base44.entities.Housing.create(listingData);
-      await loadListings();
-      setShowAddListing(false);
-    } catch (error) {
-      console.error('Error adding listing:', error);
-    }
+    createListingMutation.mutate(listingData);
   };
-
-  const uniqueCities = [...new Set(listings.map((l) => l.city).filter(Boolean))];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50/30 to-purple-50/20 p-4 lg:p-8">
@@ -158,7 +139,7 @@ export default function HousingPage() {
         <HousingFilters filters={filters} setFilters={setFilters} cities={uniqueCities} />
 
         {/* Results Counter */}
-        <div className="text-slate-600">Found {filteredListings.length} properties</div>
+        <div className="text-slate-600">Found {listings.length} properties</div>
 
         {/* Listings */}
         <Tabs value={viewMode} onValueChange={setViewMode}>
@@ -183,13 +164,13 @@ export default function HousingPage() {
               </div>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredListings.map((listing) => (
+                {listings.map((listing) => (
                   <HousingCard key={listing.id} listing={listing} />
                 ))}
               </div>
             )}
 
-            {filteredListings.length === 0 && !isLoading && (
+            {listings.length === 0 && !isLoading && (
               <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-lg">
                 <CardContent className="text-center py-16">
                   <MapPin className="w-16 h-16 text-slate-400 mx-auto mb-4" />

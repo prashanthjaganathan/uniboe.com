@@ -1,9 +1,9 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, GraduationCap, Instagram, Linkedin, UserPlus } from "lucide-react";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MapPin, GraduationCap, Instagram, Linkedin, UserPlus } from 'lucide-react';
 
 export default function StudentCard({ student, currentUser }) {
   const isOwnProfile = student.created_by === currentUser?.email;
@@ -26,7 +26,7 @@ export default function StudentCard({ student, currentUser }) {
             </Avatar>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-slate-900 truncate">
-                {student.created_by?.split("@")[0]}
+                {student.created_by?.split('@')[0]}
               </h3>
               <p className="text-sm text-slate-600 truncate">{student.year}</p>
             </div>

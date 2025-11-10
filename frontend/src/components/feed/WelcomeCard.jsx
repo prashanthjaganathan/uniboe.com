@@ -1,9 +1,9 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Sparkles, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function WelcomeCard() {
   return (
@@ -17,7 +17,7 @@ export default function WelcomeCard() {
           Complete your profile to connect with students in your area and get personalized
           recommendations.
         </p>
-        <Link to={createPageUrl("Profile")}>
+        <Link to={createPageUrl('Profile')}>
           <Button className="w-full sm:w-auto bg-white text-cyan-700 hover:bg-cyan-50 shadow-lg">
             Complete Profile
             <ArrowRight className="w-4 h-4 ml-2" />

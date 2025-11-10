@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/backendAdapter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/backendAdapter';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Edit,
   Save,
@@ -24,14 +24,14 @@ import {
   Instagram,
   Linkedin,
   Mail,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [studentProfile, setStudentProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
-  const [currentHobby, setCurrentHobby] = useState("");
+  const [currentHobby, setCurrentHobby] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -54,30 +54,30 @@ export default function ProfilePage() {
       } else {
         // Initialize empty form for new profile
         setFormData({
-          university: "",
-          program: "",
-          year: "",
-          location: "",
-          bio: "",
+          university: '',
+          program: '',
+          year: '',
+          location: '',
+          bio: '',
           hobbies: [],
-          instagram_handle: "",
-          linkedin_profile: "",
-          home_country: "",
+          instagram_handle: '',
+          linkedin_profile: '',
+          home_country: '',
         });
       }
     } catch (error) {
-      console.error("Error loading profile:", error);
+      console.error('Error loading profile:', error);
       // Initialize empty form if profile doesn't exist
       setFormData({
-        university: "",
-        program: "",
-        year: "",
-        location: "",
-        bio: "",
+        university: '',
+        program: '',
+        year: '',
+        location: '',
+        bio: '',
         hobbies: [],
-        instagram_handle: "",
-        linkedin_profile: "",
-        home_country: "",
+        instagram_handle: '',
+        linkedin_profile: '',
+        home_country: '',
       });
     }
     setIsLoading(false);
@@ -95,7 +95,7 @@ export default function ProfilePage() {
       await loadProfile();
       setIsEditing(false);
     } catch (error) {
-      console.error("Error saving profile:", error);
+      console.error('Error saving profile:', error);
     }
     setIsSaving(false);
   };
@@ -106,7 +106,7 @@ export default function ProfilePage() {
         ...prev,
         hobbies: [...(prev.hobbies || []), currentHobby.trim()],
       }));
-      setCurrentHobby("");
+      setCurrentHobby('');
     }
   };
 
@@ -151,11 +151,11 @@ export default function ProfilePage() {
           </div>
           <Button
             onClick={() => (isEditing ? setIsEditing(false) : setIsEditing(true))}
-            variant={isEditing ? "outline" : "default"}
+            variant={isEditing ? 'outline' : 'default'}
             className={
               isEditing
-                ? "rounded-2xl"
-                : "bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 rounded-2xl"
+                ? 'rounded-2xl'
+                : 'bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 rounded-2xl'
             }
           >
             {isEditing ? (
@@ -188,7 +188,7 @@ export default function ProfilePage() {
               <div className="flex-1 text-center lg:text-left space-y-3">
                 <div>
                   <h2 className="text-2xl lg:text-3xl font-bold text-slate-900">
-                    {user?.full_name || user?.email?.split("@")[0]}
+                    {user?.full_name || user?.email?.split('@')[0]}
                   </h2>
                   <p className="text-slate-600 flex items-center justify-center lg:justify-start gap-2 mt-1">
                     <Mail className="w-4 h-4" />
@@ -237,7 +237,7 @@ export default function ProfilePage() {
                   <Label htmlFor="university">University</Label>
                   <Input
                     id="university"
-                    value={formData.university || ""}
+                    value={formData.university || ''}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, university: e.target.value }))
                     }
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                   <Label htmlFor="program">Program/Major</Label>
                   <Input
                     id="program"
-                    value={formData.program || ""}
+                    value={formData.program || ''}
                     onChange={(e) => setFormData((prev) => ({ ...prev, program: e.target.value }))}
                     placeholder="e.g., Computer Science"
                     className="rounded-xl"
@@ -258,7 +258,7 @@ export default function ProfilePage() {
                 <div>
                   <Label htmlFor="year">Academic Year</Label>
                   <Select
-                    value={formData.year || ""}
+                    value={formData.year || ''}
                     onValueChange={(value) => setFormData((prev) => ({ ...prev, year: value }))}
                   >
                     <SelectTrigger className="rounded-xl">
@@ -278,7 +278,7 @@ export default function ProfilePage() {
                   <Label htmlFor="location">Current Location</Label>
                   <Input
                     id="location"
-                    value={formData.location || ""}
+                    value={formData.location || ''}
                     onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
                     placeholder="e.g., New York, USA"
                     className="rounded-xl"
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                   <Label htmlFor="home_country">Home Country</Label>
                   <Input
                     id="home_country"
-                    value={formData.home_country || ""}
+                    value={formData.home_country || ''}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, home_country: e.target.value }))
                     }
@@ -302,29 +302,29 @@ export default function ProfilePage() {
                 <div>
                   <p className="text-sm font-medium text-slate-500">University</p>
                   <p className="text-slate-900 mt-1">
-                    {studentProfile?.university || "Not specified"}
+                    {studentProfile?.university || 'Not specified'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">Program</p>
                   <p className="text-slate-900 mt-1">
-                    {studentProfile?.program || "Not specified"}
+                    {studentProfile?.program || 'Not specified'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">Year</p>
-                  <p className="text-slate-900 mt-1">{studentProfile?.year || "Not specified"}</p>
+                  <p className="text-slate-900 mt-1">{studentProfile?.year || 'Not specified'}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">Location</p>
                   <p className="text-slate-900 mt-1">
-                    {studentProfile?.location || "Not specified"}
+                    {studentProfile?.location || 'Not specified'}
                   </p>
                 </div>
                 <div className="md:col-span-2">
                   <p className="text-sm font-medium text-slate-500">Home Country</p>
                   <p className="text-slate-900 mt-1">
-                    {studentProfile?.home_country || "Not specified"}
+                    {studentProfile?.home_country || 'Not specified'}
                   </p>
                 </div>
               </div>
@@ -344,7 +344,7 @@ export default function ProfilePage() {
                   <Label htmlFor="bio">Bio</Label>
                   <Textarea
                     id="bio"
-                    value={formData.bio || ""}
+                    value={formData.bio || ''}
                     onChange={(e) => setFormData((prev) => ({ ...prev, bio: e.target.value }))}
                     placeholder="Tell us about yourself..."
                     className="rounded-xl resize-none"
@@ -360,7 +360,7 @@ export default function ProfilePage() {
                       onChange={(e) => setCurrentHobby(e.target.value)}
                       placeholder="Add a hobby"
                       className="rounded-xl"
-                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addHobby())}
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addHobby())}
                     />
                     <Button
                       type="button"
@@ -395,7 +395,7 @@ export default function ProfilePage() {
                     <Label htmlFor="instagram">Instagram Handle</Label>
                     <Input
                       id="instagram"
-                      value={formData.instagram_handle || ""}
+                      value={formData.instagram_handle || ''}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, instagram_handle: e.target.value }))
                       }
@@ -407,7 +407,7 @@ export default function ProfilePage() {
                     <Label htmlFor="linkedin">LinkedIn Profile</Label>
                     <Input
                       id="linkedin"
-                      value={formData.linkedin_profile || ""}
+                      value={formData.linkedin_profile || ''}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, linkedin_profile: e.target.value }))
                       }
@@ -422,7 +422,7 @@ export default function ProfilePage() {
                 <div>
                   <p className="text-sm font-medium text-slate-500">Bio</p>
                   <p className="text-slate-900 mt-1 leading-relaxed">
-                    {studentProfile?.bio || "No bio added yet."}
+                    {studentProfile?.bio || 'No bio added yet.'}
                   </p>
                 </div>
 

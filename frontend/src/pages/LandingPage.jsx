@@ -1,8 +1,8 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   MapPin,
   Users,
@@ -23,7 +23,7 @@ import {
   CheckCircle,
   Award,
   Map,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -53,13 +53,13 @@ export default function LandingPage() {
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate('/auth')}
                 className="hover:bg-cyan-50 text-slate-600"
               >
                 Login
               </Button>
               <Button
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate('/auth')}
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white"
               >
                 Sign Up
@@ -78,7 +78,7 @@ export default function LandingPage() {
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-                Your life abroad,{" "}
+                Your life abroad,{' '}
                 <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
                   simplified.
                 </span>
@@ -108,7 +108,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button
                   size="lg"
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate('/auth')}
                   className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"
                 >
                   Get started — join now
@@ -118,7 +118,7 @@ export default function LandingPage() {
                   variant="outline"
                   size="lg"
                   onClick={() => {
-                    document.getElementById("features").scrollIntoView({ behavior: "smooth" });
+                    document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
                   }}
                   className="w-full sm:w-auto border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-4 text-lg rounded-2xl"
                 >
@@ -270,7 +270,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
-              Everything you need in{" "}
+              Everything you need in{' '}
               <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
                 one platform
               </span>
@@ -333,7 +333,7 @@ export default function LandingPage() {
           </p>
           <Button
             size="lg"
-            onClick={() => navigate("/auth")}
+            onClick={() => navigate('/auth')}
             className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"
           >
             Get started — join now

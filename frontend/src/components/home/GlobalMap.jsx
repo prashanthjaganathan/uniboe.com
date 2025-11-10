@@ -1,56 +1,56 @@
-import React, { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Users, Home } from "lucide-react";
+import React, { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Users, Home } from 'lucide-react';
 
 const studentHubs = [
   {
-    name: "New York",
-    country: "USA",
+    name: 'New York',
+    country: 'USA',
     position: { x: 25, y: 40 },
     students: 12500,
     housing: 890,
-    universities: ["Columbia", "NYU", "Fordham"],
+    universities: ['Columbia', 'NYU', 'Fordham'],
   },
   {
-    name: "Boston",
-    country: "USA",
+    name: 'Boston',
+    country: 'USA',
     position: { x: 28, y: 38 },
     students: 8900,
     housing: 560,
-    universities: ["Harvard", "MIT", "BU"],
+    universities: ['Harvard', 'MIT', 'BU'],
   },
   {
-    name: "London",
-    country: "UK",
+    name: 'London',
+    country: 'UK',
     position: { x: 48, y: 32 },
     students: 15600,
     housing: 1200,
-    universities: ["Imperial", "UCL", "LSE"],
+    universities: ['Imperial', 'UCL', 'LSE'],
   },
   {
-    name: "Sydney",
-    country: "Australia",
+    name: 'Sydney',
+    country: 'Australia',
     position: { x: 85, y: 75 },
     students: 6700,
     housing: 420,
-    universities: ["USYD", "UNSW", "UTS"],
+    universities: ['USYD', 'UNSW', 'UTS'],
   },
   {
-    name: "Toronto",
-    country: "Canada",
+    name: 'Toronto',
+    country: 'Canada',
     position: { x: 22, y: 30 },
     students: 7800,
     housing: 380,
-    universities: ["UofT", "York", "Ryerson"],
+    universities: ['UofT', 'York', 'Ryerson'],
   },
   {
-    name: "Berlin",
-    country: "Germany",
+    name: 'Berlin',
+    country: 'Germany',
     position: { x: 52, y: 28 },
     students: 5400,
     housing: 340,
-    universities: ["TU Berlin", "Humboldt", "FU Berlin"],
+    universities: ['TU Berlin', 'Humboldt', 'FU Berlin'],
   },
 ];
 

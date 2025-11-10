@@ -1,9 +1,9 @@
-import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
-import { Home, MessageCircle, Building2, Users, Bot, User, Bell, LogOut, Mail } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
+import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { Home, MessageCircle, Building2, Users, Bot, User, Bell, LogOut, Mail } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -15,42 +15,42 @@ import {
   SidebarHeader,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
 
 const navigationItems = [
   {
-    title: "Home",
-    url: createPageUrl("Home"),
+    title: 'Home',
+    url: createPageUrl('Home'),
     icon: Home,
   },
   {
-    title: "Feed",
-    url: createPageUrl("Feed"),
+    title: 'Feed',
+    url: createPageUrl('Feed'),
     icon: MessageCircle,
   },
   {
-    title: "Housing",
-    url: createPageUrl("Housing"),
+    title: 'Housing',
+    url: createPageUrl('Housing'),
     icon: Building2,
   },
   {
-    title: "Community",
-    url: createPageUrl("Community"),
+    title: 'Community',
+    url: createPageUrl('Community'),
     icon: Users,
   },
   {
-    title: "Messages",
-    url: createPageUrl("Messages"),
+    title: 'Messages',
+    url: createPageUrl('Messages'),
     icon: Mail,
   },
   {
-    title: "Olive",
-    url: createPageUrl("Chat"),
+    title: 'Olive',
+    url: createPageUrl('Chat'),
     icon: Bot,
   },
   {
-    title: "Profile",
-    url: createPageUrl("Profile"),
+    title: 'Profile',
+    url: createPageUrl('Profile'),
     icon: User,
   },
 ];
@@ -62,7 +62,7 @@ export default function Layout({ children }) {
 
   const handleLogout = () => {
     logout();
-    navigate("/auth");
+    navigate('/auth');
   };
 
   return (
@@ -106,16 +106,16 @@ export default function Layout({ children }) {
                           asChild
                           className={`rounded-2xl transition-all duration-200 hover:bg-cyan-50 hover:text-cyan-700 group ${
                             location.pathname === item.url
-                              ? "bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg"
-                              : "text-slate-600"
+                              ? 'bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg'
+                              : 'text-slate-600'
                           }`}
                         >
                           <Link to={item.url} className="flex items-center gap-3 px-4 py-3">
                             <item.icon
                               className={`w-5 h-5 ${
                                 location.pathname === item.url
-                                  ? "text-white"
-                                  : "text-slate-500 group-hover:text-cyan-600"
+                                  ? 'text-white'
+                                  : 'text-slate-500 group-hover:text-cyan-600'
                               }`}
                             />
                             <span className="font-medium">{item.title}</span>
@@ -181,8 +181,8 @@ export default function Layout({ children }) {
                               asChild
                               className={`rounded-2xl transition-all duration-200 hover:bg-cyan-50 hover:text-cyan-700 ${
                                 location.pathname === item.url
-                                  ? "bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg"
-                                  : "text-slate-600"
+                                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg'
+                                  : 'text-slate-600'
                               }`}
                             >
                               <Link to={item.url} className="flex items-center gap-3 px-4 py-3">

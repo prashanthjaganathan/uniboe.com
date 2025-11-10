@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/backendAdapter";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import React, { useState, useEffect, useCallback } from 'react';
+import { base44 } from '@/api/backendAdapter';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Search,
   MapPin,
@@ -14,21 +14,21 @@ import {
   Instagram,
   Linkedin,
   Heart,
-} from "lucide-react";
-import StudentCard from "../components/community/StudentCard";
+} from 'lucide-react';
+import StudentCard from '../components/community/StudentCard';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 export default function CommunityPage() {
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterBy, setFilterBy] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterBy, setFilterBy] = useState('all');
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,7 +44,7 @@ export default function CommunityPage() {
       const studentProfiles = await base44.entities.Student.list();
       setStudents(studentProfiles);
     } catch (error) {
-      console.error("Error loading community:", error);
+      console.error('Error loading community:', error);
     }
     setIsLoading(false);
   };
@@ -59,19 +59,19 @@ export default function CommunityPage() {
         student.created_by?.toLowerCase().includes(searchTerm.toLowerCase());
 
       let matchesFilter = true;
-      if (filterBy !== "all") {
+      if (filterBy !== 'all') {
         switch (filterBy) {
-          case "same_university":
+          case 'same_university':
             matchesFilter = student.university === currentUser?.university;
             break;
-          case "same_location":
+          case 'same_location':
             matchesFilter = student.location === currentUser?.location;
             break;
-          case "graduate":
-            matchesFilter = student.year === "Graduate" || student.year === "PhD";
+          case 'graduate':
+            matchesFilter = student.year === 'Graduate' || student.year === 'PhD';
             break;
-          case "undergraduate":
-            matchesFilter = !["Graduate", "PhD"].includes(student.year);
+          case 'undergraduate':
+            matchesFilter = !['Graduate', 'PhD'].includes(student.year);
             break;
         }
       }
@@ -205,8 +205,8 @@ export default function CommunityPage() {
               <p className="text-slate-600 mb-6">Try adjusting your search or filters.</p>
               <Button
                 onClick={() => {
-                  setSearchTerm("");
-                  setFilterBy("all");
+                  setSearchTerm('');
+                  setFilterBy('all');
                 }}
                 variant="outline"
                 className="rounded-2xl"

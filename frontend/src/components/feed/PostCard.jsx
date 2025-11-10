@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Share2, MapPin, Calendar } from "lucide-react";
-import { format } from "date-fns";
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Heart, MessageCircle, Share2, MapPin, Calendar } from 'lucide-react';
+import { format } from 'date-fns';
 
 const postTypeColors = {
-  discussion: "bg-cyan-100 text-cyan-700",
-  tip: "bg-emerald-100 text-emerald-700",
-  event: "bg-purple-100 text-purple-700",
-  question: "bg-orange-100 text-orange-700",
-  announcement: "bg-pink-100 text-pink-700",
+  discussion: 'bg-cyan-100 text-cyan-700',
+  tip: 'bg-emerald-100 text-emerald-700',
+  event: 'bg-purple-100 text-purple-700',
+  question: 'bg-orange-100 text-orange-700',
+  announcement: 'bg-pink-100 text-pink-700',
 };
 
 export default function PostCard({ post, currentUser, onLike }) {
@@ -32,10 +32,10 @@ export default function PostCard({ post, currentUser, onLike }) {
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold text-slate-900">{post.created_by?.split("@")[0]}</p>
+              <p className="font-semibold text-slate-900">{post.created_by?.split('@')[0]}</p>
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <Calendar className="w-3 h-3" />
-                {format(new Date(post.created_date), "MMM d, yyyy")}
+                {format(new Date(post.created_date), 'MMM d, yyyy')}
                 {post.location && (
                   <>
                     <span>•</span>
@@ -46,7 +46,7 @@ export default function PostCard({ post, currentUser, onLike }) {
               </div>
             </div>
           </div>
-          <Badge className={postTypeColors[post.type] || "bg-slate-100 text-slate-700"}>
+          <Badge className={postTypeColors[post.type] || 'bg-slate-100 text-slate-700'}>
             {post.type}
           </Badge>
         </div>
@@ -88,11 +88,11 @@ export default function PostCard({ post, currentUser, onLike }) {
               onClick={() => onLike(post.id)}
               className={`gap-2 rounded-xl transition-all duration-200 ${
                 isLiked
-                  ? "text-red-600 bg-red-50 hover:bg-red-100"
-                  : "text-slate-600 hover:text-red-600 hover:bg-red-50"
+                  ? 'text-red-600 bg-red-50 hover:bg-red-100'
+                  : 'text-slate-600 hover:text-red-600 hover:bg-red-50'
               }`}
             >
-              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+              <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
               {post.likes?.length || 0}
             </Button>
             <Button

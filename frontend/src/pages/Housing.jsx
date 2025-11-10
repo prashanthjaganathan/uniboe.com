@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/backendAdapter";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useCallback } from 'react';
+import { base44 } from '@/api/backendAdapter';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   MapPin,
   Filter,
@@ -25,23 +25,23 @@ import {
   Map,
   List,
   Star,
-} from "lucide-react";
-import HousingCard from "../components/housing/HousingCard";
-import HousingFilters from "../components/housing/HousingFilters";
-import AddListingModal from "../components/housing/AddListingModal";
+} from 'lucide-react';
+import HousingCard from '../components/housing/HousingCard';
+import HousingFilters from '../components/housing/HousingFilters';
+import AddListingModal from '../components/housing/AddListingModal';
 
 export default function HousingPage() {
   const [listings, setListings] = useState([]);
   const [filteredListings, setFilteredListings] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
-    priceMin: "",
-    priceMax: "",
-    propertyType: "all",
-    bedrooms: "all",
-    city: "all",
+    priceMin: '',
+    priceMax: '',
+    propertyType: 'all',
+    bedrooms: 'all',
+    city: 'all',
   });
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState('list');
   const [showAddListing, setShowAddListing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,7 +55,7 @@ export default function HousingPage() {
       const data = await base44.entities.Housing.list();
       setListings(data);
     } catch (error) {
-      console.error("Error loading listings:", error);
+      console.error('Error loading listings:', error);
       // Set empty array on error to prevent app crash
       setListings([]);
     }
@@ -75,10 +75,10 @@ export default function HousingPage() {
         (!filters.priceMax || listing.price <= parseFloat(filters.priceMax));
 
       const matchesType =
-        filters.propertyType === "all" || listing.property_type === filters.propertyType;
+        filters.propertyType === 'all' || listing.property_type === filters.propertyType;
       const matchesBedrooms =
-        filters.bedrooms === "all" || listing.bedrooms?.toString() === filters.bedrooms;
-      const matchesCity = filters.city === "all" || listing.city === filters.city;
+        filters.bedrooms === 'all' || listing.bedrooms?.toString() === filters.bedrooms;
+      const matchesCity = filters.city === 'all' || listing.city === filters.city;
 
       return matchesSearch && matchesPrice && matchesType && matchesBedrooms && matchesCity;
     });
@@ -96,7 +96,7 @@ export default function HousingPage() {
       await loadListings();
       setShowAddListing(false);
     } catch (error) {
-      console.error("Error adding listing:", error);
+      console.error('Error adding listing:', error);
     }
   };
 
@@ -200,11 +200,11 @@ export default function HousingPage() {
                   <Button
                     onClick={() =>
                       setFilters({
-                        priceMin: "",
-                        priceMax: "",
-                        propertyType: "all",
-                        bedrooms: "all",
-                        city: "all",
+                        priceMin: '',
+                        priceMax: '',
+                        propertyType: 'all',
+                        bedrooms: 'all',
+                        city: 'all',
                       })
                     }
                     variant="outline"

@@ -4,17 +4,17 @@
  * WITHOUT modifying backend code
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
 class BackendAdapter {
   constructor() {
-    this.token = localStorage.getItem("access_token");
+    this.token = localStorage.getItem('access_token');
     this.user = null;
   }
 
   getToken() {
     if (!this.token) {
-      this.token = localStorage.getItem("access_token");
+      this.token = localStorage.getItem('access_token');
     }
     return this.token;
   }
@@ -26,55 +26,55 @@ class BackendAdapter {
   auth = {
     login: async (email, password) => {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
-        throw new Error("Login failed");
+        throw new Error('Login failed');
       }
 
       const data = await response.json();
       this.token = data.access_token;
-      localStorage.setItem("token", this.token);
+      localStorage.setItem('token', this.token);
       return data;
     },
 
     register: async (email, password, full_name) => {
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, full_name }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail || "Registration failed");
+        throw new Error(error.detail || 'Registration failed');
       }
 
       const data = await response.json();
       this.token = data.access_token;
-      localStorage.setItem("token", this.token);
+      localStorage.setItem('token', this.token);
       return data;
     },
 
     logout: () => {
       this.token = null;
       this.user = null;
-      localStorage.removeItem("access_token");
+      localStorage.removeItem('access_token');
     },
 
     me: async () => {
       const token = this.getToken();
-      if (!token) throw new Error("Not authenticated");
+      if (!token) throw new Error('Not authenticated');
 
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get user info");
+        throw new Error('Failed to get user info');
       }
 
       this.user = await response.json();
@@ -82,7 +82,7 @@ class BackendAdapter {
     },
 
     getToken: () => {
-      return this.token || localStorage.getItem("access_token");
+      return this.token || localStorage.getItem('access_token');
     },
   };
 
@@ -93,13 +93,13 @@ class BackendAdapter {
   entities = {
     // POST ENTITY
     Post: {
-      list: async (orderBy = "-created_at", limit = 50) => {
+      list: async (orderBy = '-created_at', limit = 50) => {
         const token = this.auth.getToken();
         const response = await fetch(`${API_BASE_URL}/posts?limit=${limit}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
-        if (!response.ok) throw new Error("Failed to fetch posts");
+        if (!response.ok) throw new Error('Failed to fetch posts');
 
         const posts = await response.json();
 
@@ -108,7 +108,7 @@ class BackendAdapter {
           id: post.id,
           content: post.content,
           author_id: post.user_id,
-          author_name: post.user?.full_name || "Unknown",
+          author_name: post.user?.full_name || 'Unknown',
           author_avatar: post.user?.profile?.profile_image || null,
           author_university: post.user?.profile?.university || null,
           images: post.media_urls || [],
@@ -117,7 +117,7 @@ class BackendAdapter {
           comments: [], // Backend doesn't support comments yet
           comment_count: 0,
           created_date: post.created_at,
-          type: "general", // Backend doesn't have post types yet
+          type: 'general', // Backend doesn't have post types yet
           location: post.user?.profile?.location || null,
           university: post.user?.profile?.university || null,
           tags: [], // Backend doesn't support tags yet
@@ -130,14 +130,14 @@ class BackendAdapter {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
-        if (!response.ok) throw new Error("Failed to fetch post");
+        if (!response.ok) throw new Error('Failed to fetch post');
 
         const post = await response.json();
         return {
           id: post.id,
           content: post.content,
           author_id: post.user_id,
-          author_name: post.user?.full_name || "Unknown",
+          author_name: post.user?.full_name || 'Unknown',
           author_avatar: post.user?.profile?.profile_image || null,
           author_university: post.user?.profile?.university || null,
           images: post.media_urls || [],
@@ -146,7 +146,7 @@ class BackendAdapter {
           comments: [],
           comment_count: 0,
           created_date: post.created_at,
-          type: "general",
+          type: 'general',
           location: post.user?.profile?.location || null,
           university: post.user?.profile?.university || null,
           tags: [],
@@ -155,12 +155,12 @@ class BackendAdapter {
 
       create: async (postData) => {
         const token = this.auth.getToken();
-        if (!token) throw new Error("Authentication required");
+        if (!token) throw new Error('Authentication required');
 
         const response = await fetch(`${API_BASE_URL}/posts`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -169,30 +169,30 @@ class BackendAdapter {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to create post");
+        if (!response.ok) throw new Error('Failed to create post');
         return await response.json();
       },
 
       update: async (id, data) => {
         const token = this.auth.getToken();
-        if (!token) throw new Error("Authentication required");
+        if (!token) throw new Error('Authentication required');
 
         // Handle likes update specially
         if (data.likes !== undefined) {
           const response = await fetch(`${API_BASE_URL}/posts/${id}/like`, {
-            method: "POST",
+            method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          if (!response.ok) throw new Error("Failed to update post");
+          if (!response.ok) throw new Error('Failed to update post');
           return await response.json();
         }
 
         // Regular update
         const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -201,20 +201,20 @@ class BackendAdapter {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to update post");
+        if (!response.ok) throw new Error('Failed to update post');
         return await response.json();
       },
 
       delete: async (id) => {
         const token = this.auth.getToken();
-        if (!token) throw new Error("Authentication required");
+        if (!token) throw new Error('Authentication required');
 
         const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
-          method: "DELETE",
+          method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok) throw new Error("Failed to delete post");
+        if (!response.ok) throw new Error('Failed to delete post');
         return { success: true };
       },
     },
@@ -225,21 +225,21 @@ class BackendAdapter {
         const token = this.auth.getToken();
         const params = new URLSearchParams();
 
-        if (filters.university) params.append("university", filters.university);
-        if (filters.location) params.append("location", filters.location);
+        if (filters.university) params.append('university', filters.university);
+        if (filters.location) params.append('location', filters.location);
 
         const response = await fetch(`${API_BASE_URL}/profiles/search?${params}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
-        if (!response.ok) throw new Error("Failed to fetch students");
+        if (!response.ok) throw new Error('Failed to fetch students');
 
         const profiles = await response.json();
 
         // Transform backend format to frontend1 format
         return profiles.map((profile) => ({
           id: profile.user_id,
-          name: profile.user?.full_name || "Unknown",
+          name: profile.user?.full_name || 'Unknown',
           email: profile.user?.email,
           university: profile.university,
           program: profile.major, // Backend uses 'major' instead of 'program'
@@ -261,12 +261,12 @@ class BackendAdapter {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
-        if (!response.ok) throw new Error("Failed to fetch student profile");
+        if (!response.ok) throw new Error('Failed to fetch student profile');
 
         const profile = await response.json();
         return {
           id: profile.user_id,
-          name: profile.user?.full_name || "Unknown",
+          name: profile.user?.full_name || 'Unknown',
           email: profile.user?.email,
           university: profile.university,
           program: profile.major,
@@ -284,12 +284,12 @@ class BackendAdapter {
 
       update: async (userId, data) => {
         const token = this.auth.getToken();
-        if (!token) throw new Error("Authentication required");
+        if (!token) throw new Error('Authentication required');
 
         const response = await fetch(`${API_BASE_URL}/profiles/${userId}`, {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -306,7 +306,7 @@ class BackendAdapter {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to update profile");
+        if (!response.ok) throw new Error('Failed to update profile');
         return await response.json();
       },
     },
@@ -316,15 +316,15 @@ class BackendAdapter {
       list: async (filters = {}) => {
         const params = new URLSearchParams();
 
-        if (filters.city) params.append("city", filters.city);
-        if (filters.country) params.append("country", filters.country);
-        if (filters.min_price) params.append("min_price", filters.min_price);
-        if (filters.max_price) params.append("max_price", filters.max_price);
-        if (filters.property_type) params.append("property_type", filters.property_type);
+        if (filters.city) params.append('city', filters.city);
+        if (filters.country) params.append('country', filters.country);
+        if (filters.min_price) params.append('min_price', filters.min_price);
+        if (filters.max_price) params.append('max_price', filters.max_price);
+        if (filters.property_type) params.append('property_type', filters.property_type);
 
         const response = await fetch(`${API_BASE_URL}/housing/search?${params}`);
 
-        if (!response.ok) throw new Error("Failed to fetch housing listings");
+        if (!response.ok) throw new Error('Failed to fetch housing listings');
 
         const listings = await response.json();
 
@@ -334,7 +334,7 @@ class BackendAdapter {
           title: listing.title,
           description: listing.description,
           price: listing.price,
-          currency: "USD", // Backend doesn't have currency field yet
+          currency: 'USD', // Backend doesn't have currency field yet
           location: listing.location,
           city: listing.city,
           country: listing.country,
@@ -363,7 +363,7 @@ class BackendAdapter {
       get: async (id) => {
         const response = await fetch(`${API_BASE_URL}/housing/${id}`);
 
-        if (!response.ok) throw new Error("Failed to fetch housing listing");
+        if (!response.ok) throw new Error('Failed to fetch housing listing');
 
         const listing = await response.json();
         return {
@@ -371,7 +371,7 @@ class BackendAdapter {
           title: listing.title,
           description: listing.description,
           price: listing.price,
-          currency: "USD",
+          currency: 'USD',
           location: listing.location,
           city: listing.city,
           country: listing.country,
@@ -399,12 +399,12 @@ class BackendAdapter {
 
       create: async (housingData) => {
         const token = this.auth.getToken();
-        if (!token) throw new Error("Authentication required");
+        if (!token) throw new Error('Authentication required');
 
         const response = await fetch(`${API_BASE_URL}/housing`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -428,18 +428,18 @@ class BackendAdapter {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to create housing listing");
+        if (!response.ok) throw new Error('Failed to create housing listing');
         return await response.json();
       },
 
       update: async (id, data) => {
         const token = this.auth.getToken();
-        if (!token) throw new Error("Authentication required");
+        if (!token) throw new Error('Authentication required');
 
         const response = await fetch(`${API_BASE_URL}/housing/${id}`, {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -463,20 +463,20 @@ class BackendAdapter {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to update housing listing");
+        if (!response.ok) throw new Error('Failed to update housing listing');
         return await response.json();
       },
 
       delete: async (id) => {
         const token = this.auth.getToken();
-        if (!token) throw new Error("Authentication required");
+        if (!token) throw new Error('Authentication required');
 
         const response = await fetch(`${API_BASE_URL}/housing/${id}`, {
-          method: "DELETE",
+          method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok) throw new Error("Failed to delete housing listing");
+        if (!response.ok) throw new Error('Failed to delete housing listing');
         return { success: true };
       },
     },
@@ -485,15 +485,15 @@ class BackendAdapter {
     // Returning empty data since backend doesn't have News API yet
     NewsArticle: {
       list: async () => {
-        console.warn("News API not supported by backend yet");
+        console.warn('News API not supported by backend yet');
         return [];
       },
       get: async (id) => {
-        console.warn("News API not supported by backend yet");
+        console.warn('News API not supported by backend yet');
         return null;
       },
       create: async (data) => {
-        throw new Error("News API not supported by backend yet");
+        throw new Error('News API not supported by backend yet');
       },
     },
   };

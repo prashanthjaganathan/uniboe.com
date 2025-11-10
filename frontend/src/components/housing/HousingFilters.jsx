@@ -1,15 +1,15 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Filter, X } from "lucide-react";
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Filter, X } from 'lucide-react';
 
 export default function HousingFilters({ filters, setFilters, cities }) {
   const handleFilterChange = (key, value) => {
@@ -18,15 +18,15 @@ export default function HousingFilters({ filters, setFilters, cities }) {
 
   const clearFilters = () => {
     setFilters({
-      priceMin: "",
-      priceMax: "",
-      propertyType: "all",
-      bedrooms: "all",
-      city: "all",
+      priceMin: '',
+      priceMax: '',
+      propertyType: 'all',
+      bedrooms: 'all',
+      city: 'all',
     });
   };
 
-  const hasActiveFilters = Object.values(filters).some((value) => value && value !== "all");
+  const hasActiveFilters = Object.values(filters).some((value) => value && value !== 'all');
 
   return (
     <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-lg">
@@ -43,21 +43,21 @@ export default function HousingFilters({ filters, setFilters, cities }) {
                 type="number"
                 placeholder="Min price"
                 value={filters.priceMin}
-                onChange={(e) => handleFilterChange("priceMin", e.target.value)}
+                onChange={(e) => handleFilterChange('priceMin', e.target.value)}
                 className="rounded-xl"
               />
               <Input
                 type="number"
                 placeholder="Max price"
                 value={filters.priceMax}
-                onChange={(e) => handleFilterChange("priceMax", e.target.value)}
+                onChange={(e) => handleFilterChange('priceMax', e.target.value)}
                 className="rounded-xl"
               />
             </div>
 
             <Select
               value={filters.city}
-              onValueChange={(value) => handleFilterChange("city", value)}
+              onValueChange={(value) => handleFilterChange('city', value)}
             >
               <SelectTrigger className="rounded-xl">
                 <SelectValue placeholder="City" />
@@ -74,7 +74,7 @@ export default function HousingFilters({ filters, setFilters, cities }) {
 
             <Select
               value={filters.propertyType}
-              onValueChange={(value) => handleFilterChange("propertyType", value)}
+              onValueChange={(value) => handleFilterChange('propertyType', value)}
             >
               <SelectTrigger className="rounded-xl">
                 <SelectValue placeholder="Property Type" />
@@ -91,7 +91,7 @@ export default function HousingFilters({ filters, setFilters, cities }) {
 
             <Select
               value={filters.bedrooms}
-              onValueChange={(value) => handleFilterChange("bedrooms", value)}
+              onValueChange={(value) => handleFilterChange('bedrooms', value)}
             >
               <SelectTrigger className="rounded-xl">
                 <SelectValue placeholder="Bedrooms" />

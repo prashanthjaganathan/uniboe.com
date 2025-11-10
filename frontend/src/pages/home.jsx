@@ -1,7 +1,7 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   MapPin,
   Users,
@@ -22,9 +22,9 @@ import {
   CheckCircle,
   Award,
   Map,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function HomePage() {
   return (
@@ -51,25 +51,25 @@ export default function HomePage() {
             </div>
             <div className="hidden md:flex items-center gap-8">
               <Link
-                to={createPageUrl("Feed")}
+                to={createPageUrl('Feed')}
                 className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
               >
                 Feed
               </Link>
               <Link
-                to={createPageUrl("Housing")}
+                to={createPageUrl('Housing')}
                 className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
               >
                 Housing
               </Link>
               <Link
-                to={createPageUrl("News")}
+                to={createPageUrl('News')}
                 className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
               >
                 News & Legal
               </Link>
               <Link
-                to={createPageUrl("Profile")}
+                to={createPageUrl('Profile')}
                 className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
               >
                 Profile
@@ -88,7 +88,7 @@ export default function HomePage() {
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-                Your life abroad,{" "}
+                Your life abroad,{' '}
                 <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
                   simplified.
                 </span>
@@ -116,7 +116,7 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link to={createPageUrl("Feed")}>
+                <Link to={createPageUrl('Feed')}>
                   <Button
                     size="lg"
                     className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"
@@ -278,7 +278,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
-              Everything you need in{" "}
+              Everything you need in{' '}
               <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
                 one platform
               </span>
@@ -339,7 +339,7 @@ export default function HomePage() {
           <p className="text-lg lg:text-xl text-slate-300 mb-8">
             Start your journey with the most trusted platform for international students.
           </p>
-          <Link to={createPageUrl("Feed")}>
+          <Link to={createPageUrl('Feed')}>
             <Button
               size="lg"
               className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"

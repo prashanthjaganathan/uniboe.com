@@ -1,27 +1,27 @@
-import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus, MapPin, Tag } from "lucide-react";
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { X, Plus, MapPin, Tag } from 'lucide-react';
 
 export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
   const [formData, setFormData] = useState({
-    content: "",
-    type: "discussion",
-    location: "",
+    content: '',
+    type: 'discussion',
+    location: '',
     tags: [],
   });
-  const [currentTag, setCurrentTag] = useState("");
+  const [currentTag, setCurrentTag] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -31,14 +31,14 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
     try {
       await onSubmit(formData);
       setFormData({
-        content: "",
-        type: "discussion",
-        location: "",
+        content: '',
+        type: 'discussion',
+        location: '',
         tags: [],
       });
-      setCurrentTag("");
+      setCurrentTag('');
     } catch (error) {
-      console.error("Error creating post:", error);
+      console.error('Error creating post:', error);
     }
 
     setIsSubmitting(false);
@@ -50,7 +50,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
         ...prev,
         tags: [...prev.tags, currentTag.trim()],
       }));
-      setCurrentTag("");
+      setCurrentTag('');
     }
   };
 
@@ -125,7 +125,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
                 onChange={(e) => setCurrentTag(e.target.value)}
                 placeholder="Add a tag"
                 className="rounded-xl"
-                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
               />
               <Button
                 type="button"
@@ -164,7 +164,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
               disabled={isSubmitting || !formData.content.trim()}
               className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 rounded-xl"
             >
-              {isSubmitting ? "Posting..." : "Post"}
+              {isSubmitting ? 'Posting...' : 'Post'}
             </Button>
           </div>
         </form>

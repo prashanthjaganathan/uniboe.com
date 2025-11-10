@@ -1,41 +1,41 @@
-import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { X, Plus } from 'lucide-react';
 
 export default function AddListingModal({ isOpen, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: "",
-    location: "",
-    city: "",
-    country: "",
-    property_type: "",
-    bedrooms: "",
-    bathrooms: "",
+    title: '',
+    description: '',
+    price: '',
+    location: '',
+    city: '',
+    country: '',
+    property_type: '',
+    bedrooms: '',
+    bathrooms: '',
     furnished: false,
     utilities_included: false,
     amenities: [],
-    available_from: "",
-    lease_length: "",
+    available_from: '',
+    lease_length: '',
     is_sublease: false,
     looking_for_roommate: false,
-    contact_info: "",
+    contact_info: '',
   });
-  const [currentAmenity, setCurrentAmenity] = useState("");
+  const [currentAmenity, setCurrentAmenity] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -45,26 +45,26 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
     try {
       await onSubmit(formData);
       setFormData({
-        title: "",
-        description: "",
-        price: "",
-        location: "",
-        city: "",
-        country: "",
-        property_type: "",
-        bedrooms: "",
-        bathrooms: "",
+        title: '',
+        description: '',
+        price: '',
+        location: '',
+        city: '',
+        country: '',
+        property_type: '',
+        bedrooms: '',
+        bathrooms: '',
         furnished: false,
         utilities_included: false,
         amenities: [],
-        available_from: "",
-        lease_length: "",
+        available_from: '',
+        lease_length: '',
         is_sublease: false,
         looking_for_roommate: false,
-        contact_info: "",
+        contact_info: '',
       });
     } catch (error) {
-      console.error("Error adding listing:", error);
+      console.error('Error adding listing:', error);
     }
 
     setIsSubmitting(false);
@@ -76,7 +76,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
         ...prev,
         amenities: [...prev.amenities, currentAmenity.trim()],
       }));
-      setCurrentAmenity("");
+      setCurrentAmenity('');
     }
   };
 
@@ -251,7 +251,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                   onChange={(e) => setCurrentAmenity(e.target.value)}
                   placeholder="Add amenity"
                   className="rounded-xl"
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addAmenity())}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenity())}
                 />
                 <Button
                   type="button"
@@ -345,7 +345,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               disabled={isSubmitting}
               className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 rounded-xl"
             >
-              {isSubmitting ? "Adding..." : "Add Listing"}
+              {isSubmitting ? 'Adding...' : 'Add Listing'}
             </Button>
           </div>
         </form>

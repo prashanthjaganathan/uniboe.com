@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/backendAdapter";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Plus, TrendingUp } from "lucide-react";
-import PostCard from "../components/feed/PostCard";
-import CreatePostModal from "../components/feed/CreatePostModal";
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/backendAdapter';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Plus, TrendingUp } from 'lucide-react';
+import PostCard from '../components/feed/PostCard';
+import CreatePostModal from '../components/feed/CreatePostModal';
 
 export default function FeedPage() {
   const [user, setUser] = useState(null);
@@ -14,8 +14,8 @@ export default function FeedPage() {
   const queryClient = useQueryClient();
 
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["posts"],
-    queryFn: () => base44.entities.Post.list("-created_date", 50),
+    queryKey: ['posts'],
+    queryFn: () => base44.entities.Post.list('-created_date', 50),
     initialData: [],
   });
 
@@ -28,14 +28,14 @@ export default function FeedPage() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
     } catch (error) {
-      console.error("Error loading user:", error);
+      console.error('Error loading user:', error);
     }
   };
 
   const createPostMutation = useMutation({
     mutationFn: (postData) => base44.entities.Post.create(postData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       setShowCreatePost(false);
     },
   });
@@ -43,7 +43,7 @@ export default function FeedPage() {
   const updatePostMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Post.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
   });
 
@@ -61,7 +61,7 @@ export default function FeedPage() {
 
       updatePostMutation.mutate({ id: postId, data: { likes: updatedLikes } });
     } catch (error) {
-      console.error("Error liking post:", error);
+      console.error('Error liking post:', error);
     }
   };
 

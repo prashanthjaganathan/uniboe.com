@@ -1,28 +1,28 @@
-import React, { useState, useRef, useEffect } from "react";
-import { InvokeLLM } from "@/integrations/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send, Bot, User, Sparkles, Home, Plane, BookOpen, Heart } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import React, { useState, useRef, useEffect } from 'react';
+import { InvokeLLM } from '@/integrations/Core';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Send, Bot, User, Sparkles, Home, Plane, BookOpen, Heart } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      sender: "olive",
+      sender: 'olive',
       content:
         "Hi there! I'm Olive, your friendly AI companion for student life abroad. I'm here to help you with housing questions, visa information, campus life tips, and anything else you need support with. What can I help you with today?",
       timestamp: new Date(),
     },
   ]);
-  const [inputMessage, setInputMessage] = useState("");
+  const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -35,13 +35,13 @@ export default function ChatPage() {
 
     const userMessage = {
       id: messages.length + 1,
-      sender: "user",
+      sender: 'user',
       content: inputMessage,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInputMessage("");
+    setInputMessage('');
     setIsLoading(true);
 
     try {
@@ -56,17 +56,17 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
 
       const oliveMessage = {
         id: messages.length + 2,
-        sender: "olive",
+        sender: 'olive',
         content: response,
         timestamp: new Date(),
       };
 
       setMessages((prev) => [...prev, oliveMessage]);
     } catch (error) {
-      console.error("Error getting AI response:", error);
+      console.error('Error getting AI response:', error);
       const errorMessage = {
         id: messages.length + 2,
-        sender: "olive",
+        sender: 'olive',
         content:
           "I'm sorry, I encountered an issue processing your request. Please try again in a moment!",
         timestamp: new Date(),
@@ -78,10 +78,10 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
   };
 
   const quickQuestions = [
-    { icon: Home, text: "How do I find student housing?", category: "housing" },
-    { icon: Plane, text: "Visa renewal process", category: "visa" },
-    { icon: BookOpen, text: "Study tips for international students", category: "academic" },
-    { icon: Heart, text: "Dealing with homesickness", category: "wellbeing" },
+    { icon: Home, text: 'How do I find student housing?', category: 'housing' },
+    { icon: Plane, text: 'Visa renewal process', category: 'visa' },
+    { icon: BookOpen, text: 'Study tips for international students', category: 'academic' },
+    { icon: Heart, text: 'Dealing with homesickness', category: 'wellbeing' },
   ];
 
   const handleQuickQuestion = (question) => {
@@ -136,9 +136,9 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                  className={`flex gap-3 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  {message.sender === "olive" && (
+                  {message.sender === 'olive' && (
                     <Avatar className="w-8 h-8">
                       <AvatarFallback className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm">
                         <Bot className="w-4 h-4" />
@@ -147,13 +147,13 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
                   )}
 
                   <div
-                    className={`max-w-sm lg:max-w-md xl:max-w-lg ${message.sender === "user" ? "order-first" : ""}`}
+                    className={`max-w-sm lg:max-w-md xl:max-w-lg ${message.sender === 'user' ? 'order-first' : ''}`}
                   >
                     <div
                       className={`p-3 rounded-2xl ${
-                        message.sender === "user"
-                          ? "bg-gradient-to-r from-rose-500 to-orange-500 text-white ml-auto"
-                          : "bg-slate-100 text-slate-900"
+                        message.sender === 'user'
+                          ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white ml-auto'
+                          : 'bg-slate-100 text-slate-900'
                       }`}
                     >
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -161,16 +161,16 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
                       </p>
                     </div>
                     <p
-                      className={`text-xs text-slate-500 mt-1 ${message.sender === "user" ? "text-right" : "text-left"}`}
+                      className={`text-xs text-slate-500 mt-1 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}
                     >
                       {message.timestamp.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })}
                     </p>
                   </div>
 
-                  {message.sender === "user" && (
+                  {message.sender === 'user' && (
                     <Avatar className="w-8 h-8">
                       <AvatarFallback className="bg-gradient-to-r from-rose-500 to-orange-500 text-white text-sm">
                         <User className="w-4 h-4" />
@@ -192,11 +192,11 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
                       <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
                       <div
                         className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
+                        style={{ animationDelay: '0.1s' }}
                       ></div>
                       <div
                         className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
+                        style={{ animationDelay: '0.2s' }}
                       ></div>
                     </div>
                   </div>

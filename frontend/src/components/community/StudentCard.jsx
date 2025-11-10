@@ -14,14 +14,19 @@ export default function StudentCard({ student, currentUser }) {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12">
-              <AvatarImage src={student.profile_image || `https://ui-avatars.com/api/?name=${student.created_by}&background=FF6B6B&color=fff`} />
+              <AvatarImage
+                src={
+                  student.profile_image ||
+                  `https://ui-avatars.com/api/?name=${student.created_by}&background=FF6B6B&color=fff`
+                }
+              />
               <AvatarFallback className="bg-gradient-to-r from-rose-500 to-orange-500 text-white">
                 {student.created_by?.charAt(0)?.toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-slate-900 truncate">
-                {student.created_by?.split('@')[0]}
+                {student.created_by?.split("@")[0]}
               </h3>
               <p className="text-sm text-slate-600 truncate">{student.year}</p>
             </div>
@@ -42,9 +47,7 @@ export default function StudentCard({ student, currentUser }) {
           </div>
 
           {student.bio && (
-            <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
-              {student.bio}
-            </p>
+            <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">{student.bio}</p>
           )}
 
           {student.hobbies && student.hobbies.length > 0 && (
@@ -65,20 +68,28 @@ export default function StudentCard({ student, currentUser }) {
           <div className="flex items-center justify-between pt-2 border-t border-slate-100">
             <div className="flex gap-2">
               {student.instagram_handle && (
-                <Button size="icon" variant="ghost" className="w-8 h-8 text-pink-600 hover:bg-pink-50">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="w-8 h-8 text-pink-600 hover:bg-pink-50"
+                >
                   <Instagram className="w-4 h-4" />
                 </Button>
               )}
               {student.linkedin_profile && (
-                <Button size="icon" variant="ghost" className="w-8 h-8 text-blue-600 hover:bg-blue-50">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="w-8 h-8 text-blue-600 hover:bg-blue-50"
+                >
                   <Linkedin className="w-4 h-4" />
                 </Button>
               )}
             </div>
-            
+
             {!isOwnProfile && (
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white rounded-xl text-xs px-3 py-1"
               >
                 <UserPlus className="w-3 h-3 mr-1" />

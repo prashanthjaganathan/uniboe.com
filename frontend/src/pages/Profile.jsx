@@ -5,10 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Edit, Save, X, Plus, MapPin, GraduationCap, Instagram, Linkedin, Mail } from "lucide-react";
+import {
+  Edit,
+  Save,
+  X,
+  Plus,
+  MapPin,
+  GraduationCap,
+  Instagram,
+  Linkedin,
+  Mail,
+} from "lucide-react";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -46,7 +62,7 @@ export default function ProfilePage() {
           hobbies: [],
           instagram_handle: "",
           linkedin_profile: "",
-          home_country: ""
+          home_country: "",
         });
       }
     } catch (error) {
@@ -61,7 +77,7 @@ export default function ProfilePage() {
         hobbies: [],
         instagram_handle: "",
         linkedin_profile: "",
-        home_country: ""
+        home_country: "",
       });
     }
     setIsLoading(false);
@@ -86,18 +102,18 @@ export default function ProfilePage() {
 
   const addHobby = () => {
     if (currentHobby.trim() && !formData.hobbies?.includes(currentHobby.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        hobbies: [...(prev.hobbies || []), currentHobby.trim()]
+        hobbies: [...(prev.hobbies || []), currentHobby.trim()],
       }));
       setCurrentHobby("");
     }
   };
 
   const removeHobby = (hobbyToRemove) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      hobbies: (prev.hobbies || []).filter(hobby => hobby !== hobbyToRemove)
+      hobbies: (prev.hobbies || []).filter((hobby) => hobby !== hobbyToRemove),
     }));
   };
 
@@ -105,15 +121,20 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50/30 to-purple-50/20 p-4 lg:p-8">
         <div className="max-w-4xl mx-auto space-y-6">
-          {Array(3).fill(0).map((_, i) => (
-            <Card key={i} className="animate-pulse border-0 bg-white/80 backdrop-blur-sm shadow-lg">
-              <CardContent className="p-6 space-y-4">
-                <div className="h-6 bg-slate-200 rounded w-1/4"></div>
-                <div className="h-4 bg-slate-200 rounded w-full"></div>
-                <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-              </CardContent>
-            </Card>
-          ))}
+          {Array(3)
+            .fill(0)
+            .map((_, i) => (
+              <Card
+                key={i}
+                className="animate-pulse border-0 bg-white/80 backdrop-blur-sm shadow-lg"
+              >
+                <CardContent className="p-6 space-y-4">
+                  <div className="h-6 bg-slate-200 rounded w-1/4"></div>
+                  <div className="h-4 bg-slate-200 rounded w-full"></div>
+                  <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+                </CardContent>
+              </Card>
+            ))}
         </div>
       </div>
     );
@@ -129,9 +150,13 @@ export default function ProfilePage() {
             <p className="text-slate-600 mt-1">Manage your student profile and preferences</p>
           </div>
           <Button
-            onClick={() => isEditing ? setIsEditing(false) : setIsEditing(true)}
+            onClick={() => (isEditing ? setIsEditing(false) : setIsEditing(true))}
             variant={isEditing ? "outline" : "default"}
-            className={isEditing ? "rounded-2xl" : "bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 rounded-2xl"}
+            className={
+              isEditing
+                ? "rounded-2xl"
+                : "bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 rounded-2xl"
+            }
           >
             {isEditing ? (
               <>
@@ -152,23 +177,25 @@ export default function ProfilePage() {
           <CardContent className="p-6 lg:p-8">
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
               <Avatar className="w-24 h-24 lg:w-32 lg:h-32">
-                <AvatarImage src={`https://ui-avatars.com/api/?name=${user?.full_name || user?.email}&background=FF6B6B&color=fff&size=200`} />
+                <AvatarImage
+                  src={`https://ui-avatars.com/api/?name=${user?.full_name || user?.email}&background=FF6B6B&color=fff&size=200`}
+                />
                 <AvatarFallback className="bg-gradient-to-r from-rose-500 to-orange-500 text-white text-2xl lg:text-3xl">
                   {user?.full_name?.charAt(0) || user?.email?.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              
+
               <div className="flex-1 text-center lg:text-left space-y-3">
                 <div>
                   <h2 className="text-2xl lg:text-3xl font-bold text-slate-900">
-                    {user?.full_name || user?.email?.split('@')[0]}
+                    {user?.full_name || user?.email?.split("@")[0]}
                   </h2>
                   <p className="text-slate-600 flex items-center justify-center lg:justify-start gap-2 mt-1">
                     <Mail className="w-4 h-4" />
                     {user?.email}
                   </p>
                 </div>
-                
+
                 {studentProfile && (
                   <div className="space-y-2">
                     {studentProfile.university && (
@@ -211,7 +238,9 @@ export default function ProfilePage() {
                   <Input
                     id="university"
                     value={formData.university || ""}
-                    onChange={(e) => setFormData(prev => ({ ...prev, university: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, university: e.target.value }))
+                    }
                     placeholder="e.g., Columbia University"
                     className="rounded-xl"
                   />
@@ -221,7 +250,7 @@ export default function ProfilePage() {
                   <Input
                     id="program"
                     value={formData.program || ""}
-                    onChange={(e) => setFormData(prev => ({ ...prev, program: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, program: e.target.value }))}
                     placeholder="e.g., Computer Science"
                     className="rounded-xl"
                   />
@@ -230,7 +259,7 @@ export default function ProfilePage() {
                   <Label htmlFor="year">Academic Year</Label>
                   <Select
                     value={formData.year || ""}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, year: value }))}
+                    onValueChange={(value) => setFormData((prev) => ({ ...prev, year: value }))}
                   >
                     <SelectTrigger className="rounded-xl">
                       <SelectValue placeholder="Select year" />
@@ -250,7 +279,7 @@ export default function ProfilePage() {
                   <Input
                     id="location"
                     value={formData.location || ""}
-                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
                     placeholder="e.g., New York, USA"
                     className="rounded-xl"
                   />
@@ -260,7 +289,9 @@ export default function ProfilePage() {
                   <Input
                     id="home_country"
                     value={formData.home_country || ""}
-                    onChange={(e) => setFormData(prev => ({ ...prev, home_country: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, home_country: e.target.value }))
+                    }
                     placeholder="e.g., India"
                     className="rounded-xl"
                   />
@@ -270,11 +301,15 @@ export default function ProfilePage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <p className="text-sm font-medium text-slate-500">University</p>
-                  <p className="text-slate-900 mt-1">{studentProfile?.university || "Not specified"}</p>
+                  <p className="text-slate-900 mt-1">
+                    {studentProfile?.university || "Not specified"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">Program</p>
-                  <p className="text-slate-900 mt-1">{studentProfile?.program || "Not specified"}</p>
+                  <p className="text-slate-900 mt-1">
+                    {studentProfile?.program || "Not specified"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">Year</p>
@@ -282,11 +317,15 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">Location</p>
-                  <p className="text-slate-900 mt-1">{studentProfile?.location || "Not specified"}</p>
+                  <p className="text-slate-900 mt-1">
+                    {studentProfile?.location || "Not specified"}
+                  </p>
                 </div>
                 <div className="md:col-span-2">
                   <p className="text-sm font-medium text-slate-500">Home Country</p>
-                  <p className="text-slate-900 mt-1">{studentProfile?.home_country || "Not specified"}</p>
+                  <p className="text-slate-900 mt-1">
+                    {studentProfile?.home_country || "Not specified"}
+                  </p>
                 </div>
               </div>
             )}
@@ -306,13 +345,13 @@ export default function ProfilePage() {
                   <Textarea
                     id="bio"
                     value={formData.bio || ""}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, bio: e.target.value }))}
                     placeholder="Tell us about yourself..."
                     className="rounded-xl resize-none"
                     rows={3}
                   />
                 </div>
-                
+
                 <div>
                   <Label>Hobbies & Interests</Label>
                   <div className="flex gap-2 mb-2">
@@ -321,7 +360,7 @@ export default function ProfilePage() {
                       onChange={(e) => setCurrentHobby(e.target.value)}
                       placeholder="Add a hobby"
                       className="rounded-xl"
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addHobby())}
+                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addHobby())}
                     />
                     <Button
                       type="button"
@@ -357,7 +396,9 @@ export default function ProfilePage() {
                     <Input
                       id="instagram"
                       value={formData.instagram_handle || ""}
-                      onChange={(e) => setFormData(prev => ({ ...prev, instagram_handle: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, instagram_handle: e.target.value }))
+                      }
                       placeholder="@username"
                       className="rounded-xl"
                     />
@@ -367,7 +408,9 @@ export default function ProfilePage() {
                     <Input
                       id="linkedin"
                       value={formData.linkedin_profile || ""}
-                      onChange={(e) => setFormData(prev => ({ ...prev, linkedin_profile: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, linkedin_profile: e.target.value }))
+                      }
                       placeholder="LinkedIn profile URL"
                       className="rounded-xl"
                     />
@@ -382,7 +425,7 @@ export default function ProfilePage() {
                     {studentProfile?.bio || "No bio added yet."}
                   </p>
                 </div>
-                
+
                 {studentProfile?.hobbies && studentProfile.hobbies.length > 0 && (
                   <div>
                     <p className="text-sm font-medium text-slate-500 mb-2">Hobbies & Interests</p>
@@ -399,8 +442,8 @@ export default function ProfilePage() {
                 <div className="flex gap-4">
                   {studentProfile?.instagram_handle && (
                     <Button variant="outline" size="sm" className="gap-2 rounded-xl">
-                      <Instagram className="w-4 h-4 text-pink-600" />
-                      @{studentProfile.instagram_handle}
+                      <Instagram className="w-4 h-4 text-pink-600" />@
+                      {studentProfile.instagram_handle}
                     </Button>
                   )}
                   {studentProfile?.linkedin_profile && (

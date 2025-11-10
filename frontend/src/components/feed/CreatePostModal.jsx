@@ -1,16 +1,16 @@
-
 import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, MapPin, Tag } from "lucide-react";
 
@@ -19,7 +19,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
     content: "",
     type: "discussion",
     location: "",
-    tags: []
+    tags: [],
   });
   const [currentTag, setCurrentTag] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,37 +27,37 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       await onSubmit(formData);
       setFormData({
         content: "",
         type: "discussion",
         location: "",
-        tags: []
+        tags: [],
       });
       setCurrentTag("");
     } catch (error) {
       console.error("Error creating post:", error);
     }
-    
+
     setIsSubmitting(false);
   };
 
   const addTag = () => {
     if (currentTag.trim() && !formData.tags.includes(currentTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, currentTag.trim()]
+        tags: [...prev.tags, currentTag.trim()],
       }));
       setCurrentTag("");
     }
   };
 
   const removeTag = (tagToRemove) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
@@ -67,13 +67,13 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-slate-900">Create New Post</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="type">Post Type</Label>
             <Select
               value={formData.type}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
+              onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
             >
               <SelectTrigger className="rounded-xl">
                 <SelectValue />
@@ -93,7 +93,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
             <Textarea
               id="content"
               value={formData.content}
-              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
               placeholder="Share your thoughts, ask a question, or give some advice..."
               className="min-h-32 rounded-xl resize-none"
               required
@@ -108,7 +108,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
             <Input
               id="location"
               value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
               placeholder="e.g., New York, London, Sydney"
               className="rounded-xl"
             />
@@ -125,7 +125,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
                 onChange={(e) => setCurrentTag(e.target.value)}
                 placeholder="Add a tag"
                 className="rounded-xl"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
               />
               <Button
                 type="button"
@@ -156,12 +156,7 @@ export default function CreatePostModal({ isOpen, onClose, onSubmit, user }) {
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="rounded-xl"
-            >
+            <Button type="button" variant="outline" onClick={onClose} className="rounded-xl">
               Cancel
             </Button>
             <Button

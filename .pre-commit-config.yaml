@@ -32,7 +32,7 @@ repos:
 
   # Stage 3: Sort imports (after autoflake removes unused ones)
   - repo: https://github.com/pycqa/isort
-    rev: 7.0.0
+    rev: 5.13.2
     hooks:
       - id: isort
         files: ^backend/.*\.py$

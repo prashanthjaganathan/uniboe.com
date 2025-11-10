@@ -99,8 +99,6 @@
   background-clip: text;
 }
 
-
-
 @layer base {
   * {
     @apply border-border;

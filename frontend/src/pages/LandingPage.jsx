@@ -4,9 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  MapPin, Users, Home, MessageCircle, Bot, Shield, ArrowRight, Globe,
-  Heart, Star, Verified, Lock, Instagram, Linkedin, Camera, Clock,
-  CheckCircle, Award, Map
+  MapPin,
+  Users,
+  Home,
+  MessageCircle,
+  Bot,
+  Shield,
+  ArrowRight,
+  Globe,
+  Heart,
+  Star,
+  Verified,
+  Lock,
+  Instagram,
+  Linkedin,
+  Camera,
+  Clock,
+  CheckCircle,
+  Award,
+  Map,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -37,13 +53,13 @@ export default function LandingPage() {
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate("/auth")}
                 className="hover:bg-cyan-50 text-slate-600"
               >
                 Login
               </Button>
               <Button
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate("/auth")}
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white"
               >
                 Sign Up
@@ -69,7 +85,8 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Connect with students, find verified housing, get legal updates, and navigate life abroad with confidence. All in one trusted platform.
+                Connect with students, find verified housing, get legal updates, and navigate life
+                abroad with confidence. All in one trusted platform.
               </p>
 
               {/* Trust Indicators */}
@@ -91,7 +108,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button
                   size="lg"
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate("/auth")}
                   className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"
                 >
                   Get started — join now
@@ -101,7 +118,7 @@ export default function LandingPage() {
                   variant="outline"
                   size="lg"
                   onClick={() => {
-                    document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById("features").scrollIntoView({ behavior: "smooth" });
                   }}
                   className="w-full sm:w-auto border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-4 text-lg rounded-2xl"
                 >
@@ -145,8 +162,7 @@ export default function LandingPage() {
                             24
                           </div>
                           <div className="flex items-center gap-1 text-xs text-slate-500">
-                            <MessageCircle className="w-3 h-3" />
-                            8
+                            <MessageCircle className="w-3 h-3" />8
                           </div>
                         </div>
                       </Card>
@@ -180,9 +196,15 @@ export default function LandingPage() {
 
                       {/* Tab Navigation */}
                       <div className="flex bg-slate-100 rounded-xl p-1 mb-4">
-                        <div className="flex-1 bg-white rounded-lg py-2 text-center text-xs font-medium shadow-sm">Housing</div>
-                        <div className="flex-1 py-2 text-center text-xs text-slate-500">Flatmates</div>
-                        <div className="flex-1 py-2 text-center text-xs text-slate-500">Sublease</div>
+                        <div className="flex-1 bg-white rounded-lg py-2 text-center text-xs font-medium shadow-sm">
+                          Housing
+                        </div>
+                        <div className="flex-1 py-2 text-center text-xs text-slate-500">
+                          Flatmates
+                        </div>
+                        <div className="flex-1 py-2 text-center text-xs text-slate-500">
+                          Sublease
+                        </div>
                       </div>
 
                       {/* Housing Listing */}
@@ -219,7 +241,9 @@ export default function LandingPage() {
                           <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
                           <div className="flex-1">
                             <div className="text-sm font-medium">Emma Chen</div>
-                            <div className="text-xs text-slate-500">Columbia • Computer Science</div>
+                            <div className="text-xs text-slate-500">
+                              Columbia • Computer Science
+                            </div>
                           </div>
                           <div className="flex gap-1">
                             <Instagram className="w-4 h-4 text-pink-500" />
@@ -252,7 +276,8 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-lg lg:text-xl text-slate-600 max-w-3xl mx-auto">
-              From housing to community, legal updates to AI assistance - we've got your international student journey covered.
+              From housing to community, legal updates to AI assistance - we've got your
+              international student journey covered.
             </p>
           </div>
 
@@ -276,7 +301,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">Global Community</h3>
                 <p className="text-slate-600 leading-relaxed">
-                  Connect with students worldwide. Share experiences, tips, and build lasting friendships.
+                  Connect with students worldwide. Share experiences, tips, and build lasting
+                  friendships.
                 </p>
               </CardContent>
             </Card>
@@ -307,7 +333,7 @@ export default function LandingPage() {
           </p>
           <Button
             size="lg"
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate("/auth")}
             className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"
           >
             Get started — join now

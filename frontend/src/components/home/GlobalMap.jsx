@@ -4,54 +4,54 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Users, Home } from "lucide-react";
 
 const studentHubs = [
-  { 
-    name: "New York", 
+  {
+    name: "New York",
     country: "USA",
     position: { x: 25, y: 40 },
     students: 12500,
     housing: 890,
-    universities: ["Columbia", "NYU", "Fordham"]
+    universities: ["Columbia", "NYU", "Fordham"],
   },
-  { 
-    name: "Boston", 
+  {
+    name: "Boston",
     country: "USA",
     position: { x: 28, y: 38 },
     students: 8900,
     housing: 560,
-    universities: ["Harvard", "MIT", "BU"]
+    universities: ["Harvard", "MIT", "BU"],
   },
-  { 
-    name: "London", 
+  {
+    name: "London",
     country: "UK",
     position: { x: 48, y: 32 },
     students: 15600,
     housing: 1200,
-    universities: ["Imperial", "UCL", "LSE"]
+    universities: ["Imperial", "UCL", "LSE"],
   },
-  { 
-    name: "Sydney", 
+  {
+    name: "Sydney",
     country: "Australia",
     position: { x: 85, y: 75 },
     students: 6700,
     housing: 420,
-    universities: ["USYD", "UNSW", "UTS"]
+    universities: ["USYD", "UNSW", "UTS"],
   },
-  { 
-    name: "Toronto", 
+  {
+    name: "Toronto",
     country: "Canada",
     position: { x: 22, y: 30 },
     students: 7800,
     housing: 380,
-    universities: ["UofT", "York", "Ryerson"]
+    universities: ["UofT", "York", "Ryerson"],
   },
-  { 
-    name: "Berlin", 
+  {
+    name: "Berlin",
     country: "Germany",
     position: { x: 52, y: 28 },
     students: 5400,
     housing: 340,
-    universities: ["TU Berlin", "Humboldt", "FU Berlin"]
-  }
+    universities: ["TU Berlin", "Humboldt", "FU Berlin"],
+  },
 ];
 
 export default function GlobalMap() {
@@ -64,7 +64,7 @@ export default function GlobalMap() {
         <svg width="100%" height="100%" viewBox="0 0 100 100" className="w-full h-full">
           <defs>
             <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
+              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
             </pattern>
           </defs>
           <rect width="100" height="100" fill="url(#grid)" />
@@ -76,9 +76,9 @@ export default function GlobalMap() {
         <div
           key={hub.name}
           className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 hover:scale-110"
-          style={{ 
-            left: `${hub.position.x}%`, 
-            top: `${hub.position.y}%`
+          style={{
+            left: `${hub.position.x}%`,
+            top: `${hub.position.y}%`,
           }}
           onMouseEnter={() => setHoveredHub(hub)}
           onMouseLeave={() => setHoveredHub(null)}
@@ -96,7 +96,9 @@ export default function GlobalMap() {
           <CardContent className="p-4 space-y-3">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-blue-600" />
-              <span className="font-semibold text-slate-900">{hoveredHub.name}, {hoveredHub.country}</span>
+              <span className="font-semibold text-slate-900">
+                {hoveredHub.name}, {hoveredHub.country}
+              </span>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-4">

@@ -11,7 +11,7 @@ const postTypeColors = {
   tip: "bg-emerald-100 text-emerald-700",
   event: "bg-purple-100 text-purple-700",
   question: "bg-orange-100 text-orange-700",
-  announcement: "bg-pink-100 text-pink-700"
+  announcement: "bg-pink-100 text-pink-700",
 };
 
 export default function PostCard({ post, currentUser, onLike }) {
@@ -24,13 +24,15 @@ export default function PostCard({ post, currentUser, onLike }) {
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12">
-              <AvatarImage src={`https://ui-avatars.com/api/?name=${post.created_by}&background=00CFFF&color=fff`} />
+              <AvatarImage
+                src={`https://ui-avatars.com/api/?name=${post.created_by}&background=00CFFF&color=fff`}
+              />
               <AvatarFallback className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
                 {post.created_by?.charAt(0)?.toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold text-slate-900">{post.created_by?.split('@')[0]}</p>
+              <p className="font-semibold text-slate-900">{post.created_by?.split("@")[0]}</p>
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <Calendar className="w-3 h-3" />
                 {format(new Date(post.created_date), "MMM d, yyyy")}
@@ -52,17 +54,15 @@ export default function PostCard({ post, currentUser, onLike }) {
 
       <CardContent className="px-6 pb-6 space-y-4">
         <div className="prose prose-slate max-w-none">
-          <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">
-            {post.content}
-          </p>
+          <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{post.content}</p>
         </div>
 
         {post.images && post.images.length > 0 && (
           <div className="grid grid-cols-1 gap-3 rounded-xl overflow-hidden">
             {post.images.map((image, index) => (
-              <img 
+              <img
                 key={index}
-                src={image} 
+                src={image}
                 alt="Post image"
                 className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300 rounded-xl"
               />
@@ -87,8 +87,8 @@ export default function PostCard({ post, currentUser, onLike }) {
               size="sm"
               onClick={() => onLike(post.id)}
               className={`gap-2 rounded-xl transition-all duration-200 ${
-                isLiked 
-                  ? "text-red-600 bg-red-50 hover:bg-red-100" 
+                isLiked
+                  ? "text-red-600 bg-red-50 hover:bg-red-100"
                   : "text-slate-600 hover:text-red-600 hover:bg-red-50"
               }`}
             >

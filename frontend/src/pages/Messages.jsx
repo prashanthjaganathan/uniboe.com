@@ -5,11 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
-  Search, Send, MoreVertical, Phone, Video,
-  Smile, Check, CheckCheck, Loader2
+  Search,
+  Send,
+  MoreVertical,
+  Phone,
+  Video,
+  Smile,
+  Check,
+  CheckCheck,
+  Loader2,
 } from "lucide-react";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 export default function Messages() {
   const { user, token } = useAuth();
@@ -41,9 +48,9 @@ export default function Messages() {
     try {
       const response = await fetch(`${API_BASE_URL}/chat/conversations`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (response.ok) {
@@ -51,7 +58,7 @@ export default function Messages() {
         setConversations(data.conversations || []);
       }
     } catch (error) {
-      console.error('Error fetching conversations:', error);
+      console.error("Error fetching conversations:", error);
     } finally {
       setLoading(false);
     }
@@ -63,10 +70,10 @@ export default function Messages() {
         `${API_BASE_URL}/chat/conversations/${conversationId}/messages?page=1&page_size=50`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (response.ok) {
@@ -75,23 +82,23 @@ export default function Messages() {
         setMessages((data.messages || []).reverse());
       }
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error("Error fetching messages:", error);
     }
   };
 
   const markConversationAsRead = async (conversationId) => {
     try {
       await fetch(`${API_BASE_URL}/chat/conversations/${conversationId}/mark-read`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
       // Refresh conversations to update unread count
       fetchConversations();
     } catch (error) {
-      console.error('Error marking as read:', error);
+      console.error("Error marking as read:", error);
     }
   };
 
@@ -110,13 +117,13 @@ export default function Messages() {
         const response = await fetch(
           `${API_BASE_URL}/chat/conversations/${selectedChat.id}/messages`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ content: message })
-          }
+            body: JSON.stringify({ content: message }),
+          },
         );
 
         if (response.ok) {
@@ -127,7 +134,7 @@ export default function Messages() {
           fetchConversations();
         }
       } catch (error) {
-        console.error('Error sending message:', error);
+        console.error("Error sending message:", error);
       } finally {
         setSendingMessage(false);
       }
@@ -135,19 +142,23 @@ export default function Messages() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
 
-  const filteredConversations = conversations.filter(conv =>
-    conv.other_user?.full_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter((conv) =>
+    conv.other_user?.full_name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const getInitials = (name) => {
     if (!name) return "?";
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
   const formatTimestamp = (timestamp) => {
@@ -158,7 +169,7 @@ export default function Messages() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
+    if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
@@ -167,7 +178,7 @@ export default function Messages() {
 
   const formatMessageTime = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   if (loading) {
@@ -212,7 +223,7 @@ export default function Messages() {
                 key={conv.id}
                 onClick={() => setSelectedChat(conv)}
                 className={`p-4 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors ${
-                  selectedChat?.id === conv.id ? 'bg-cyan-50' : ''
+                  selectedChat?.id === conv.id ? "bg-cyan-50" : ""
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -228,14 +239,14 @@ export default function Messages() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold text-slate-900 truncate">
-                        {conv.other_user?.full_name || 'Unknown User'}
+                        {conv.other_user?.full_name || "Unknown User"}
                       </h3>
                       <span className="text-xs text-slate-500">
-                        {conv.last_message_at ? formatTimestamp(conv.last_message_at) : ''}
+                        {conv.last_message_at ? formatTimestamp(conv.last_message_at) : ""}
                       </span>
                     </div>
                     <p className="text-sm text-slate-600 truncate">
-                      {conv.last_message_preview || 'No messages yet'}
+                      {conv.last_message_preview || "No messages yet"}
                     </p>
                   </div>
 
@@ -263,10 +274,10 @@ export default function Messages() {
               </Avatar>
               <div>
                 <h2 className="font-semibold text-slate-900">
-                  {selectedChat.other_user?.full_name || 'Unknown User'}
+                  {selectedChat.other_user?.full_name || "Unknown User"}
                 </h2>
                 <p className="text-sm text-slate-500">
-                  {selectedChat.other_user?.university_email || ''}
+                  {selectedChat.other_user?.university_email || ""}
                 </p>
               </div>
             </div>
@@ -296,29 +307,32 @@ export default function Messages() {
                 return (
                   <div
                     key={msg.id}
-                    className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
                   >
-                    <div className={`max-w-xs lg:max-w-md ${isCurrentUser ? 'order-2' : 'order-1'}`}>
+                    <div
+                      className={`max-w-xs lg:max-w-md ${isCurrentUser ? "order-2" : "order-1"}`}
+                    >
                       <div
                         className={`rounded-2xl px-4 py-2 ${
                           isCurrentUser
-                            ? 'bg-gradient-to-r from-cyan-500 to-cyan-400 text-white'
-                            : 'bg-slate-100 text-slate-900'
+                            ? "bg-gradient-to-r from-cyan-500 to-cyan-400 text-white"
+                            : "bg-slate-100 text-slate-900"
                         }`}
                       >
                         <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
                       </div>
-                      <div className={`flex items-center gap-1 mt-1 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`flex items-center gap-1 mt-1 ${isCurrentUser ? "justify-end" : "justify-start"}`}
+                      >
                         <span className="text-xs text-slate-500">
                           {formatMessageTime(msg.created_at)}
                         </span>
-                        {isCurrentUser && (
-                          msg.is_read ? (
+                        {isCurrentUser &&
+                          (msg.is_read ? (
                             <CheckCheck className="w-3 h-3 text-cyan-600" />
                           ) : (
                             <Check className="w-3 h-3 text-slate-400" />
-                          )
-                        )}
+                          ))}
                       </div>
                     </div>
                   </div>

@@ -62,7 +62,7 @@ export default function Layout({ children }) {
 
   const handleLogout = () => {
     logout();
-    navigate('/auth');
+    navigate("/auth");
   };
 
   return (
@@ -79,7 +79,7 @@ export default function Layout({ children }) {
           --uniboe-highlight-light: #34D399;
         }
       `}</style>
-      
+
       <SidebarProvider>
         <div className="flex w-full">
           {/* Desktop Sidebar */}
@@ -95,25 +95,29 @@ export default function Layout({ children }) {
                 </div>
               </div>
             </SidebarHeader>
-            
+
             <SidebarContent className="p-3">
               <SidebarGroup>
                 <SidebarGroupContent>
                   <SidebarMenu className="space-y-1">
                     {navigationItems.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton 
-                          asChild 
+                        <SidebarMenuButton
+                          asChild
                           className={`rounded-2xl transition-all duration-200 hover:bg-cyan-50 hover:text-cyan-700 group ${
-                            location.pathname === item.url 
-                              ? 'bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg' 
-                              : 'text-slate-600'
+                            location.pathname === item.url
+                              ? "bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg"
+                              : "text-slate-600"
                           }`}
                         >
                           <Link to={item.url} className="flex items-center gap-3 px-4 py-3">
-                            <item.icon className={`w-5 h-5 ${
-                              location.pathname === item.url ? 'text-white' : 'text-slate-500 group-hover:text-cyan-600'
-                            }`} />
+                            <item.icon
+                              className={`w-5 h-5 ${
+                                location.pathname === item.url
+                                  ? "text-white"
+                                  : "text-slate-500 group-hover:text-cyan-600"
+                              }`}
+                            />
                             <span className="font-medium">{item.title}</span>
                           </Link>
                         </SidebarMenuButton>
@@ -173,12 +177,12 @@ export default function Layout({ children }) {
                       <SidebarMenu className="space-y-2">
                         {navigationItems.map((item) => (
                           <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton 
-                              asChild 
+                            <SidebarMenuButton
+                              asChild
                               className={`rounded-2xl transition-all duration-200 hover:bg-cyan-50 hover:text-cyan-700 ${
-                                location.pathname === item.url 
-                                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg' 
-                                  : 'text-slate-600'
+                                location.pathname === item.url
+                                  ? "bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg"
+                                  : "text-slate-600"
                               }`}
                             >
                               <Link to={item.url} className="flex items-center gap-3 px-4 py-3">
@@ -214,9 +218,7 @@ export default function Layout({ children }) {
             </div>
 
             {/* Main content area */}
-            <div className="flex-1">
-              {children}
-            </div>
+            <div className="flex-1">{children}</div>
           </main>
         </div>
       </SidebarProvider>

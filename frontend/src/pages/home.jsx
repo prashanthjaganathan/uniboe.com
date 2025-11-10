@@ -1,12 +1,27 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  MapPin, Users, Home, MessageCircle, Bot, Shield, ArrowRight, Globe, 
-  Heart, Star, Verified, Lock, Instagram, Linkedin, Camera, Clock,
-  CheckCircle, Award, Map
+import {
+  MapPin,
+  Users,
+  Home,
+  MessageCircle,
+  Bot,
+  Shield,
+  ArrowRight,
+  Globe,
+  Heart,
+  Star,
+  Verified,
+  Lock,
+  Instagram,
+  Linkedin,
+  Camera,
+  Clock,
+  CheckCircle,
+  Award,
+  Map,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -17,7 +32,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-100/20 to-emerald-100/20"></div>
-        
+
         {/* Floating Olive Chatbot */}
         <div className="fixed top-6 right-6 z-50">
           <div className="w-14 h-14 bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300 cursor-pointer">
@@ -35,10 +50,30 @@ export default function HomePage() {
               <span className="font-bold text-slate-900 text-xl">Uniboe</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              <Link to={createPageUrl("Feed")} className="text-slate-600 hover:text-cyan-600 font-medium transition-colors">Feed</Link>
-              <Link to={createPageUrl("Housing")} className="text-slate-600 hover:text-cyan-600 font-medium transition-colors">Housing</Link>
-              <Link to={createPageUrl("News")} className="text-slate-600 hover:text-cyan-600 font-medium transition-colors">News & Legal</Link>
-              <Link to={createPageUrl("Profile")} className="text-slate-600 hover:text-cyan-600 font-medium transition-colors">Profile</Link>
+              <Link
+                to={createPageUrl("Feed")}
+                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
+              >
+                Feed
+              </Link>
+              <Link
+                to={createPageUrl("Housing")}
+                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
+              >
+                Housing
+              </Link>
+              <Link
+                to={createPageUrl("News")}
+                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
+              >
+                News & Legal
+              </Link>
+              <Link
+                to={createPageUrl("Profile")}
+                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
+              >
+                Profile
+              </Link>
             </div>
           </div>
         </nav>
@@ -51,16 +86,17 @@ export default function HomePage() {
                 <Globe className="w-4 h-4" />
                 Trusted by 50,000+ international students
               </div>
-              
+
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
                 Your life abroad,{" "}
                 <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
                   simplified.
                 </span>
               </h1>
-              
+
               <p className="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Connect with students, find verified housing, get legal updates, and navigate life abroad with confidence. All in one trusted platform.
+                Connect with students, find verified housing, get legal updates, and navigate life
+                abroad with confidence. All in one trusted platform.
               </p>
 
               {/* Trust Indicators */}
@@ -81,12 +117,19 @@ export default function HomePage() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link to={createPageUrl("Feed")}>
-                  <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"
+                  >
                     Get started — join now
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
-                <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-4 text-lg rounded-2xl">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full sm:w-auto border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-4 text-lg rounded-2xl"
+                >
                   See how it works
                 </Button>
               </div>
@@ -107,7 +150,7 @@ export default function HomePage() {
                           <div className="text-xs text-slate-500">Global updates</div>
                         </div>
                       </div>
-                      
+
                       {/* Feed Post with Image */}
                       <Card className="bg-slate-50 border-0 rounded-2xl p-4 mb-3">
                         <div className="flex items-center gap-3 mb-3">
@@ -127,8 +170,7 @@ export default function HomePage() {
                             24
                           </div>
                           <div className="flex items-center gap-1 text-xs text-slate-500">
-                            <MessageCircle className="w-3 h-3" />
-                            8
+                            <MessageCircle className="w-3 h-3" />8
                           </div>
                         </div>
                       </Card>
@@ -162,9 +204,15 @@ export default function HomePage() {
 
                       {/* Tab Navigation */}
                       <div className="flex bg-slate-100 rounded-xl p-1 mb-4">
-                        <div className="flex-1 bg-white rounded-lg py-2 text-center text-xs font-medium shadow-sm">Housing</div>
-                        <div className="flex-1 py-2 text-center text-xs text-slate-500">Flatmates</div>
-                        <div className="flex-1 py-2 text-center text-xs text-slate-500">Sublease</div>
+                        <div className="flex-1 bg-white rounded-lg py-2 text-center text-xs font-medium shadow-sm">
+                          Housing
+                        </div>
+                        <div className="flex-1 py-2 text-center text-xs text-slate-500">
+                          Flatmates
+                        </div>
+                        <div className="flex-1 py-2 text-center text-xs text-slate-500">
+                          Sublease
+                        </div>
                       </div>
 
                       {/* Housing Listing */}
@@ -201,7 +249,9 @@ export default function HomePage() {
                           <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
                           <div className="flex-1">
                             <div className="text-sm font-medium">Emma Chen</div>
-                            <div className="text-xs text-slate-500">Columbia • Computer Science</div>
+                            <div className="text-xs text-slate-500">
+                              Columbia • Computer Science
+                            </div>
                           </div>
                           <div className="flex gap-1">
                             <Instagram className="w-4 h-4 text-pink-500" />
@@ -234,10 +284,11 @@ export default function HomePage() {
               </span>
             </h2>
             <p className="text-lg lg:text-xl text-slate-600 max-w-3xl mx-auto">
-              From housing to community, legal updates to AI assistance - we've got your international student journey covered.
+              From housing to community, legal updates to AI assistance - we've got your
+              international student journey covered.
             </p>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-cyan-50 to-emerald-50">
               <CardContent className="p-8 text-center">
@@ -258,7 +309,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">Global Community</h3>
                 <p className="text-slate-600 leading-relaxed">
-                  Connect with students worldwide. Share experiences, tips, and build lasting friendships.
+                  Connect with students worldwide. Share experiences, tips, and build lasting
+                  friendships.
                 </p>
               </CardContent>
             </Card>
@@ -288,7 +340,10 @@ export default function HomePage() {
             Start your journey with the most trusted platform for international students.
           </p>
           <Link to={createPageUrl("Feed")}>
-            <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 px-8 py-4 text-lg font-semibold rounded-2xl"
+            >
               Get started — join now
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>

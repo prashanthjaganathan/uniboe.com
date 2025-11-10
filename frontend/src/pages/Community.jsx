@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/backendAdapter";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -6,9 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, MapPin, GraduationCap, Users, Plus, Instagram, Linkedin, Heart } from "lucide-react";
+import {
+  Search,
+  MapPin,
+  GraduationCap,
+  Users,
+  Plus,
+  Instagram,
+  Linkedin,
+  Heart,
+} from "lucide-react";
 import StudentCard from "../components/community/StudentCard";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CommunityPage() {
   const [students, setStudents] = useState([]);
@@ -36,8 +50,9 @@ export default function CommunityPage() {
   };
 
   const applyFilters = useCallback(() => {
-    let filtered = students.filter(student => {
-      const matchesSearch = !searchTerm || 
+    let filtered = students.filter((student) => {
+      const matchesSearch =
+        !searchTerm ||
         student.university?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.program?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -71,8 +86,8 @@ export default function CommunityPage() {
     applyFilters();
   }, [applyFilters]); // Now depends on the memoized applyFilters
 
-  const uniqueUniversities = [...new Set(students.map(s => s.university).filter(Boolean))];
-  const uniqueLocations = [...new Set(students.map(s => s.location).filter(Boolean))];
+  const uniqueUniversities = [...new Set(students.map((s) => s.university).filter(Boolean))];
+  const uniqueLocations = [...new Set(students.map((s) => s.location).filter(Boolean))];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50/30 to-purple-50/20 p-4 lg:p-8">
@@ -95,14 +110,18 @@ export default function CommunityPage() {
           <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-lg">
             <CardContent className="p-4 lg:p-6 text-center">
               <GraduationCap className="w-8 h-8 text-orange-500 mx-auto mb-2" />
-              <div className="text-xl lg:text-2xl font-bold text-slate-900">{uniqueUniversities.length}</div>
+              <div className="text-xl lg:text-2xl font-bold text-slate-900">
+                {uniqueUniversities.length}
+              </div>
               <div className="text-sm text-slate-600">Universities</div>
             </CardContent>
           </Card>
           <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-lg">
             <CardContent className="p-4 lg:p-6 text-center">
               <MapPin className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-              <div className="text-xl lg:text-2xl font-bold text-slate-900">{uniqueLocations.length}</div>
+              <div className="text-xl lg:text-2xl font-bold text-slate-900">
+                {uniqueLocations.length}
+              </div>
               <div className="text-sm text-slate-600">Cities</div>
             </CardContent>
           </Card>
@@ -147,23 +166,28 @@ export default function CommunityPage() {
         {/* Student Grid */}
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array(8).fill(0).map((_, i) => (
-              <Card key={i} className="animate-pulse border-0 bg-white/80 backdrop-blur-sm shadow-lg">
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-slate-200 rounded-full"></div>
-                    <div className="space-y-2">
-                      <div className="h-4 bg-slate-200 rounded w-24"></div>
-                      <div className="h-3 bg-slate-200 rounded w-20"></div>
+            {Array(8)
+              .fill(0)
+              .map((_, i) => (
+                <Card
+                  key={i}
+                  className="animate-pulse border-0 bg-white/80 backdrop-blur-sm shadow-lg"
+                >
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-slate-200 rounded-full"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-slate-200 rounded w-24"></div>
+                        <div className="h-3 bg-slate-200 rounded w-20"></div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-slate-200 rounded w-full"></div>
-                    <div className="h-3 bg-slate-200 rounded w-3/4"></div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="space-y-2">
+                      <div className="h-3 bg-slate-200 rounded w-full"></div>
+                      <div className="h-3 bg-slate-200 rounded w-3/4"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -179,8 +203,11 @@ export default function CommunityPage() {
               <Users className="w-16 h-16 text-slate-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-slate-900 mb-2">No students found</h3>
               <p className="text-slate-600 mb-6">Try adjusting your search or filters.</p>
-              <Button 
-                onClick={() => {setSearchTerm(""); setFilterBy("all");}}
+              <Button
+                onClick={() => {
+                  setSearchTerm("");
+                  setFilterBy("all");
+                }}
                 variant="outline"
                 className="rounded-2xl"
               >

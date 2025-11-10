@@ -5,13 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Bed, Bath, Wifi, Car, Heart, Share2, Star, Shield } from "lucide-react";
 
 export default function HousingCard({ listing }) {
-  const firstImage = listing.images?.[0] || `https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop&crop=center`;
+  const firstImage =
+    listing.images?.[0] ||
+    `https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop&crop=center`;
 
   return (
     <Card className="group border-0 bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden">
       <div className="relative">
-        <img 
-          src={firstImage} 
+        <img
+          src={firstImage}
           alt={listing.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -29,15 +31,23 @@ export default function HousingCard({ listing }) {
           )}
         </div>
         <div className="absolute top-4 right-4 flex gap-2">
-          <Button size="icon" variant="ghost" className="bg-white/80 hover:bg-white text-slate-600 hover:text-rose-600 transition-colors w-8 h-8">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="bg-white/80 hover:bg-white text-slate-600 hover:text-rose-600 transition-colors w-8 h-8"
+          >
             <Heart className="w-4 h-4" />
           </Button>
-          <Button size="icon" variant="ghost" className="bg-white/80 hover:bg-white text-slate-600 hover:text-rose-600 transition-colors w-8 h-8">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="bg-white/80 hover:bg-white text-slate-600 hover:text-rose-600 transition-colors w-8 h-8"
+          >
             <Share2 className="w-4 h-4" />
           </Button>
         </div>
       </div>
-      
+
       <CardContent className="p-6">
         <div className="space-y-3">
           <div className="flex items-start justify-between">
@@ -51,7 +61,7 @@ export default function HousingCard({ listing }) {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center text-slate-600 text-sm">
             <MapPin className="w-4 h-4 mr-2 text-rose-500" />
             {listing.location}

@@ -1,41 +1,41 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GraduationCap, AlertCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GraduationCap, AlertCircle } from "lucide-react";
 
 export default function Auth() {
   const navigate = useNavigate();
   const { login, register } = useAuth();
 
   // Login state
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Register state
-  const [registerName, setRegisterName] = useState('');
-  const [registerEmail, setRegisterEmail] = useState('');
-  const [registerPassword, setRegisterPassword] = useState('');
-  const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
-  const [registerError, setRegisterError] = useState('');
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
+  const [registerError, setRegisterError] = useState("");
   const [registerLoading, setRegisterLoading] = useState(false);
-  const [registerSuccess, setRegisterSuccess] = useState('');
+  const [registerSuccess, setRegisterSuccess] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoginError('');
+    setLoginError("");
     setLoginLoading(true);
 
     const result = await login(loginEmail, loginPassword);
 
     if (result.success) {
-      navigate('/home');
+      navigate("/home");
     } else {
       setLoginError(result.error);
     }
@@ -45,21 +45,21 @@ export default function Auth() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setRegisterError('');
-    setRegisterSuccess('');
+    setRegisterError("");
+    setRegisterSuccess("");
     setRegisterLoading(true);
 
     // Validate passwords match
     if (registerPassword !== registerConfirmPassword) {
-      setRegisterError('Passwords do not match');
+      setRegisterError("Passwords do not match");
       setRegisterLoading(false);
       return;
     }
 
     // Extract domain from email
-    const emailParts = registerEmail.split('@');
+    const emailParts = registerEmail.split("@");
     if (emailParts.length !== 2) {
-      setRegisterError('Please enter a valid university email');
+      setRegisterError("Please enter a valid university email");
       setRegisterLoading(false);
       return;
     }
@@ -72,7 +72,7 @@ export default function Auth() {
       if (result.requiresConfirmation) {
         setRegisterSuccess(result.message);
       } else {
-        navigate('/home');
+        navigate("/home");
       }
     } else {
       setRegisterError(result.error);
@@ -148,7 +148,7 @@ export default function Auth() {
                     className="w-full bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-600 hover:to-cyan-500"
                     disabled={loginLoading}
                   >
-                    {loginLoading ? 'Signing in...' : 'Sign In'}
+                    {loginLoading ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
               </TabsContent>
@@ -228,7 +228,7 @@ export default function Auth() {
                     className="w-full bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-600 hover:to-cyan-500"
                     disabled={registerLoading}
                   >
-                    {registerLoading ? 'Creating account...' : 'Create Account'}
+                    {registerLoading ? "Creating account..." : "Create Account"}
                   </Button>
                 </form>
               </TabsContent>

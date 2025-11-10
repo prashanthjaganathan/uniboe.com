@@ -14,7 +14,8 @@ export default function WelcomeCard() {
           <h3 className="text-xl lg:text-2xl font-bold">Welcome to Uniboe!</h3>
         </div>
         <p className="text-cyan-100 mb-6 text-base lg:text-lg">
-          Complete your profile to connect with students in your area and get personalized recommendations.
+          Complete your profile to connect with students in your area and get personalized
+          recommendations.
         </p>
         <Link to={createPageUrl("Profile")}>
           <Button className="w-full sm:w-auto bg-white text-cyan-700 hover:bg-cyan-50 shadow-lg">

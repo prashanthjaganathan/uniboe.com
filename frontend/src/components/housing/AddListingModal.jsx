@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus } from "lucide-react";
@@ -32,7 +33,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
     lease_length: "",
     is_sublease: false,
     looking_for_roommate: false,
-    contact_info: ""
+    contact_info: "",
   });
   const [currentAmenity, setCurrentAmenity] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +41,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       await onSubmit(formData);
       setFormData({
@@ -60,29 +61,29 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
         lease_length: "",
         is_sublease: false,
         looking_for_roommate: false,
-        contact_info: ""
+        contact_info: "",
       });
     } catch (error) {
       console.error("Error adding listing:", error);
     }
-    
+
     setIsSubmitting(false);
   };
 
   const addAmenity = () => {
     if (currentAmenity.trim() && !formData.amenities.includes(currentAmenity.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        amenities: [...prev.amenities, currentAmenity.trim()]
+        amenities: [...prev.amenities, currentAmenity.trim()],
       }));
       setCurrentAmenity("");
     }
   };
 
   const removeAmenity = (amenityToRemove) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      amenities: prev.amenities.filter(amenity => amenity !== amenityToRemove)
+      amenities: prev.amenities.filter((amenity) => amenity !== amenityToRemove),
     }));
   };
 
@@ -92,7 +93,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-slate-900">List Your Property</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
@@ -100,7 +101,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                 placeholder="e.g., Cozy Studio Near NYU"
                 className="rounded-xl"
                 required
@@ -112,7 +113,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe your property..."
                 className="min-h-24 rounded-xl resize-none"
               />
@@ -124,7 +125,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 id="price"
                 type="number"
                 value={formData.price}
-                onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, price: parseFloat(e.target.value) }))
+                }
                 placeholder="1500"
                 className="rounded-xl"
                 required
@@ -135,7 +138,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Label htmlFor="property_type">Property Type</Label>
               <Select
                 value={formData.property_type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, property_type: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, property_type: value }))
+                }
               >
                 <SelectTrigger className="rounded-xl">
                   <SelectValue placeholder="Select type" />
@@ -155,7 +160,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Input
                 id="city"
                 value={formData.city}
-                onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))}
                 placeholder="New York"
                 className="rounded-xl"
                 required
@@ -167,7 +172,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Input
                 id="country"
                 value={formData.country}
-                onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, country: e.target.value }))}
                 placeholder="USA"
                 className="rounded-xl"
                 required
@@ -180,7 +185,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 id="bedrooms"
                 type="number"
                 value={formData.bedrooms}
-                onChange={(e) => setFormData(prev => ({ ...prev, bedrooms: parseInt(e.target.value) }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, bedrooms: parseInt(e.target.value) }))
+                }
                 placeholder="1"
                 className="rounded-xl"
               />
@@ -192,7 +199,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 id="bathrooms"
                 type="number"
                 value={formData.bathrooms}
-                onChange={(e) => setFormData(prev => ({ ...prev, bathrooms: parseInt(e.target.value) }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, bathrooms: parseInt(e.target.value) }))
+                }
                 placeholder="1"
                 className="rounded-xl"
               />
@@ -203,7 +212,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Input
                 id="location"
                 value={formData.location}
-                onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
                 placeholder="123 Main St, Brooklyn, NY 11201"
                 className="rounded-xl"
                 required
@@ -216,7 +225,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 id="available_from"
                 type="date"
                 value={formData.available_from}
-                onChange={(e) => setFormData(prev => ({ ...prev, available_from: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, available_from: e.target.value }))
+                }
                 className="rounded-xl"
               />
             </div>
@@ -226,7 +237,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Input
                 id="lease_length"
                 value={formData.lease_length}
-                onChange={(e) => setFormData(prev => ({ ...prev, lease_length: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, lease_length: e.target.value }))}
                 placeholder="12 months"
                 className="rounded-xl"
               />
@@ -240,7 +251,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                   onChange={(e) => setCurrentAmenity(e.target.value)}
                   placeholder="Add amenity"
                   className="rounded-xl"
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenity())}
+                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addAmenity())}
                 />
                 <Button
                   type="button"
@@ -275,7 +286,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 <Checkbox
                   id="furnished"
                   checked={formData.furnished}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, furnished: checked }))}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, furnished: checked }))
+                  }
                 />
                 <Label htmlFor="furnished">Furnished</Label>
               </div>
@@ -283,7 +296,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 <Checkbox
                   id="utilities"
                   checked={formData.utilities_included}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, utilities_included: checked }))}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, utilities_included: checked }))
+                  }
                 />
                 <Label htmlFor="utilities">Utilities Included</Label>
               </div>
@@ -291,7 +306,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 <Checkbox
                   id="sublease"
                   checked={formData.is_sublease}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_sublease: checked }))}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, is_sublease: checked }))
+                  }
                 />
                 <Label htmlFor="sublease">This is a sublease</Label>
               </div>
@@ -299,7 +316,9 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 <Checkbox
                   id="roommate"
                   checked={formData.looking_for_roommate}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, looking_for_roommate: checked }))}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, looking_for_roommate: checked }))
+                  }
                 />
                 <Label htmlFor="roommate">Looking for roommate</Label>
               </div>
@@ -310,7 +329,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Input
                 id="contact"
                 value={formData.contact_info}
-                onChange={(e) => setFormData(prev => ({ ...prev, contact_info: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, contact_info: e.target.value }))}
                 placeholder="Email or phone number"
                 className="rounded-xl"
               />
@@ -318,12 +337,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="rounded-xl"
-            >
+            <Button type="button" variant="outline" onClick={onClose} className="rounded-xl">
               Cancel
             </Button>
             <Button

@@ -1,13 +1,19 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Filter, X } from "lucide-react";
 
 export default function HousingFilters({ filters, setFilters, cities }) {
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
@@ -16,11 +22,11 @@ export default function HousingFilters({ filters, setFilters, cities }) {
       priceMax: "",
       propertyType: "all",
       bedrooms: "all",
-      city: "all"
+      city: "all",
     });
   };
 
-  const hasActiveFilters = Object.values(filters).some(value => value && value !== "all");
+  const hasActiveFilters = Object.values(filters).some((value) => value && value !== "all");
 
   return (
     <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-lg">
@@ -30,7 +36,7 @@ export default function HousingFilters({ filters, setFilters, cities }) {
             <Filter className="w-5 h-5 text-slate-500" />
             <span className="font-medium text-slate-900">Filters</span>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 flex-1 w-full">
             <div className="col-span-2 md:col-span-1 lg:col-span-2 grid grid-cols-2 gap-2">
               <Input
@@ -49,19 +55,27 @@ export default function HousingFilters({ filters, setFilters, cities }) {
               />
             </div>
 
-            <Select value={filters.city} onValueChange={(value) => handleFilterChange("city", value)}>
+            <Select
+              value={filters.city}
+              onValueChange={(value) => handleFilterChange("city", value)}
+            >
               <SelectTrigger className="rounded-xl">
                 <SelectValue placeholder="City" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Cities</SelectItem>
-                {cities.map(city => (
-                  <SelectItem key={city} value={city}>{city}</SelectItem>
+                {cities.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            <Select value={filters.propertyType} onValueChange={(value) => handleFilterChange("propertyType", value)}>
+            <Select
+              value={filters.propertyType}
+              onValueChange={(value) => handleFilterChange("propertyType", value)}
+            >
               <SelectTrigger className="rounded-xl">
                 <SelectValue placeholder="Property Type" />
               </SelectTrigger>
@@ -75,7 +89,10 @@ export default function HousingFilters({ filters, setFilters, cities }) {
               </SelectContent>
             </Select>
 
-            <Select value={filters.bedrooms} onValueChange={(value) => handleFilterChange("bedrooms", value)}>
+            <Select
+              value={filters.bedrooms}
+              onValueChange={(value) => handleFilterChange("bedrooms", value)}
+            >
               <SelectTrigger className="rounded-xl">
                 <SelectValue placeholder="Bedrooms" />
               </SelectTrigger>

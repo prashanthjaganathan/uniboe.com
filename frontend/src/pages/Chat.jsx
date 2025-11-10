@@ -12,9 +12,10 @@ export default function ChatPage() {
     {
       id: 1,
       sender: "olive",
-      content: "Hi there! I'm Olive, your friendly AI companion for student life abroad. I'm here to help you with housing questions, visa information, campus life tips, and anything else you need support with. What can I help you with today?",
-      timestamp: new Date()
-    }
+      content:
+        "Hi there! I'm Olive, your friendly AI companion for student life abroad. I'm here to help you with housing questions, visa information, campus life tips, and anything else you need support with. What can I help you with today?",
+      timestamp: new Date(),
+    },
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,10 +37,10 @@ export default function ChatPage() {
       id: messages.length + 1,
       sender: "user",
       content: inputMessage,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputMessage("");
     setIsLoading(true);
 
@@ -50,26 +51,27 @@ export default function ChatPage() {
 Current user message: "${inputMessage}"
 
 Respond in a helpful, friendly way as Olive. Keep your response conversational and supportive. If the question is about housing, visa, legal rights, campus life, or student services, provide specific and practical advice. If it's a general question, still respond helpfully while maintaining your role as a student life companion.`,
-        add_context_from_internet: true
+        add_context_from_internet: true,
       });
 
       const oliveMessage = {
         id: messages.length + 2,
         sender: "olive",
         content: response,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, oliveMessage]);
+      setMessages((prev) => [...prev, oliveMessage]);
     } catch (error) {
       console.error("Error getting AI response:", error);
       const errorMessage = {
         id: messages.length + 2,
         sender: "olive",
-        content: "I'm sorry, I encountered an issue processing your request. Please try again in a moment!",
-        timestamp: new Date()
+        content:
+          "I'm sorry, I encountered an issue processing your request. Please try again in a moment!",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     }
 
     setIsLoading(false);
@@ -79,7 +81,7 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
     { icon: Home, text: "How do I find student housing?", category: "housing" },
     { icon: Plane, text: "Visa renewal process", category: "visa" },
     { icon: BookOpen, text: "Study tips for international students", category: "academic" },
-    { icon: Heart, text: "Dealing with homesickness", category: "wellbeing" }
+    { icon: Heart, text: "Dealing with homesickness", category: "wellbeing" },
   ];
 
   const handleQuickQuestion = (question) => {
@@ -143,8 +145,10 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
                       </AvatarFallback>
                     </Avatar>
                   )}
-                  
-                  <div className={`max-w-sm lg:max-w-md xl:max-w-lg ${message.sender === "user" ? "order-first" : ""}`}>
+
+                  <div
+                    className={`max-w-sm lg:max-w-md xl:max-w-lg ${message.sender === "user" ? "order-first" : ""}`}
+                  >
                     <div
                       className={`p-3 rounded-2xl ${
                         message.sender === "user"
@@ -152,10 +156,17 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
                           : "bg-slate-100 text-slate-900"
                       }`}
                     >
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {message.content}
+                      </p>
                     </div>
-                    <p className={`text-xs text-slate-500 mt-1 ${message.sender === "user" ? "text-right" : "text-left"}`}>
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <p
+                      className={`text-xs text-slate-500 mt-1 ${message.sender === "user" ? "text-right" : "text-left"}`}
+                    >
+                      {message.timestamp.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </p>
                   </div>
 
@@ -179,8 +190,14 @@ Respond in a helpful, friendly way as Olive. Keep your response conversational a
                   <div className="bg-slate-100 rounded-2xl p-3">
                     <div className="flex gap-1">
                       <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      <div
+                        className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.1s" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.2s" }}
+                      ></div>
                     </div>
                   </div>
                 </div>

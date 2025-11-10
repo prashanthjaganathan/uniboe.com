@@ -1,71 +1,55 @@
-import { Routes, Route} from 'react-router-dom';
-import { useAuth } from './hooks/useAuth';
-
-// Lazy load pages for better performance
-import Landing from './pages/Landing';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import VerifyEmail from './pages/auth/VerifyEmail';
-import Feed from './pages/feed/Feed';
-import PostDetail from './pages/feed/PostDetail';
-import HousingList from './pages/housing/HousingList';
-import ListingDetail from './pages/housing/ListingDetail';
-import CreateListing from './pages/housing/CreateListing';
-import MyListings from './pages/housing/MyListings';
-import Profile from './pages/profile/Profile';
-import EditProfile from './pages/profile/EditProfile';
-import UserProfile from './pages/profile/UserProfile';
-import SearchProfiles from './pages/profile/SearchProfiles';
-import OliveLanding from './pages/olive/OliveLanding';
-import OliveChat from './pages/olive/OliveChat';
-import NotFound from './pages/NotFound';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext';
+import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
+// Import new pages
+import LandingPage from './pages/LandingPage';
+import Auth from './pages/Auth';
+import Home from './pages/home';
+import Feed from './pages/feed';
+import Housing from './pages/Housing';
+import Community from './pages/Community';
+import Chat from './pages/Chat';
+import Messages from './pages/Messages';
+import Profile from './pages/Profile';
+
+// Create a query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
 function App() {
-  const { isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/verify-email/:token" element={<VerifyEmail />} />
-      
-      {/* Protected Routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/feed" element={<Feed />} />
-        <Route path="/feed/post/:postId" element={<PostDetail />} />
-        
-        <Route path="/housing" element={<HousingList />} />
-        <Route path="/housing/:listingId" element={<ListingDetail />} />
-        <Route path="/housing/create" element={<CreateListing />} />
-        <Route path="/housing/my-listings" element={<MyListings />} />
-        
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/edit" element={<EditProfile />} />
-        <Route path="/profile/:userId" element={<UserProfile />} />
-        <Route path="/profile/search" element={<SearchProfiles />} />
-        
-        <Route path="/olive" element={<OliveLanding />} />
-        <Route path="/olive/chat" element={<OliveChat />} />
-        <Route path="/olive/chat/:conversationId" element={<OliveChat />} />
-      </Route>
-      
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Routes>
+          {/* Public routes - no sidebar */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<Auth />} />
+
+          {/* Protected routes - all use Layout and require authentication */}
+          <Route path="/home" element={<ProtectedRoute><Layout><Home /></Layout></ProtectedRoute>} />
+          <Route path="/feed" element={<ProtectedRoute><Layout><Feed /></Layout></ProtectedRoute>} />
+          <Route path="/housing" element={<ProtectedRoute><Layout><Housing /></Layout></ProtectedRoute>} />
+          <Route path="/community" element={<ProtectedRoute><Layout><Community /></Layout></ProtectedRoute>} />
+          <Route path="/messages" element={<ProtectedRoute><Layout><Messages /></Layout></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><Layout><Chat /></Layout></ProtectedRoute>} />
+          <Route path="/olive" element={<ProtectedRoute><Layout><Chat /></Layout></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
+
+          {/* Catch all - redirect to landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
 export default App;
-

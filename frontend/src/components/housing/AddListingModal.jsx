@@ -11,60 +11,124 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Upload, Loader2 } from 'lucide-react';
+import { housingService } from '@/services/housing.service';
 
 export default function AddListingModal({ isOpen, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    price: '',
-    location: '',
+    address: '',
     city: '',
-    country: '',
+    state: '',
+    zip_code: '',
+    price: '',
     property_type: '',
     bedrooms: '',
     bathrooms: '',
-    furnished: false,
-    utilities_included: false,
+    square_feet: '',
     amenities: [],
     available_from: '',
-    lease_length: '',
-    is_sublease: false,
-    looking_for_roommate: false,
-    contact_info: '',
+    available_until: '',
+    contact_email: '',
+    contact_phone: '',
+    images: [],
   });
   const [currentAmenity, setCurrentAmenity] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState('');
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length + selectedFiles.length > 10) {
+      alert('Maximum 10 images allowed');
+      return;
+    }
+    setSelectedFiles([...selectedFiles, ...files]);
+  };
+
+  const removeFile = (index) => {
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+  };
+
+  const uploadImages = async () => {
+    if (selectedFiles.length === 0) return [];
+
+    setUploadProgress('Uploading images...');
+    try {
+      const result = await housingService.uploadMedia(selectedFiles);
+      setUploadProgress('');
+      return result.image_urls || [];
+    } catch (error) {
+      setUploadProgress('');
+      throw new Error(`Upload failed: ${error.message}`);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      await onSubmit(formData);
+      // Upload images first
+      const imageUrls = await uploadImages();
+
+      // Prepare listing data matching backend model
+      const listingData = {
+        title: formData.title.trim(),
+        description: formData.description.trim() || undefined,
+        address: formData.address.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        zip_code: formData.zip_code.trim() || undefined,
+        price: parseFloat(formData.price),
+        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
+        bathrooms: formData.bathrooms ? parseFloat(formData.bathrooms) : undefined,
+        square_feet: formData.square_feet ? parseInt(formData.square_feet) : undefined,
+        property_type: formData.property_type,
+        amenities: formData.amenities.length > 0 ? formData.amenities : undefined,
+        available_from: formData.available_from || undefined,
+        available_until: formData.available_until || undefined,
+        images: imageUrls.length > 0 ? imageUrls : undefined,
+        contact_email: formData.contact_email.trim() || undefined,
+        contact_phone: formData.contact_phone.trim() || undefined,
+      };
+
+      // Validate at least one contact method
+      if (!listingData.contact_email && !listingData.contact_phone) {
+        alert('Please provide at least one contact method (email or phone)');
+        setIsSubmitting(false);
+        return;
+      }
+
+      await onSubmit(listingData);
+
+      // Reset form
       setFormData({
         title: '',
         description: '',
-        price: '',
-        location: '',
+        address: '',
         city: '',
-        country: '',
+        state: '',
+        zip_code: '',
+        price: '',
         property_type: '',
         bedrooms: '',
         bathrooms: '',
-        furnished: false,
-        utilities_included: false,
+        square_feet: '',
         amenities: [],
         available_from: '',
-        lease_length: '',
-        is_sublease: false,
-        looking_for_roommate: false,
-        contact_info: '',
+        available_until: '',
+        contact_email: '',
+        contact_phone: '',
+        images: [],
       });
+      setSelectedFiles([]);
     } catch (error) {
       console.error('Error adding listing:', error);
+      alert(error.message || 'Failed to create listing. Please try again.');
     }
 
     setIsSubmitting(false);
@@ -97,7 +161,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
-              <Label htmlFor="title">Property Title</Label>
+              <Label htmlFor="title">Property Title *</Label>
               <Input
                 id="title"
                 value={formData.title}
@@ -105,6 +169,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 placeholder="e.g., Cozy Studio Near NYU"
                 className="rounded-xl"
                 required
+                minLength={5}
               />
             </div>
 
@@ -119,44 +184,20 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               />
             </div>
 
-            <div>
-              <Label htmlFor="price">Monthly Rent ($)</Label>
+            <div className="md:col-span-2">
+              <Label htmlFor="address">Street Address *</Label>
               <Input
-                id="price"
-                type="number"
-                value={formData.price}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, price: parseFloat(e.target.value) }))
-                }
-                placeholder="1500"
+                id="address"
+                value={formData.address}
+                onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
+                placeholder="123 Main St, Apt 4B"
                 className="rounded-xl"
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="property_type">Property Type</Label>
-              <Select
-                value={formData.property_type}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, property_type: value }))
-                }
-              >
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="apartment">Apartment</SelectItem>
-                  <SelectItem value="studio">Studio</SelectItem>
-                  <SelectItem value="shared_room">Shared Room</SelectItem>
-                  <SelectItem value="private_room">Private Room</SelectItem>
-                  <SelectItem value="house">House</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="city">City</Label>
+              <Label htmlFor="city">City *</Label>
               <Input
                 id="city"
                 value={formData.city}
@@ -168,15 +209,63 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
             </div>
 
             <div>
-              <Label htmlFor="country">Country</Label>
+              <Label htmlFor="state">State *</Label>
               <Input
-                id="country"
-                value={formData.country}
-                onChange={(e) => setFormData((prev) => ({ ...prev, country: e.target.value }))}
-                placeholder="USA"
+                id="state"
+                value={formData.state}
+                onChange={(e) => setFormData((prev) => ({ ...prev, state: e.target.value }))}
+                placeholder="NY"
                 className="rounded-xl"
                 required
               />
+            </div>
+
+            <div>
+              <Label htmlFor="zip_code">ZIP Code</Label>
+              <Input
+                id="zip_code"
+                value={formData.zip_code}
+                onChange={(e) => setFormData((prev) => ({ ...prev, zip_code: e.target.value }))}
+                placeholder="10003"
+                className="rounded-xl"
+                pattern="\d{5}(-\d{4})?"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="price">Monthly Rent ($) *</Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                value={formData.price}
+                onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
+                placeholder="1500"
+                className="rounded-xl"
+                required
+                min="0"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="property_type">Property Type *</Label>
+              <Select
+                value={formData.property_type}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, property_type: value }))
+                }
+                required
+              >
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="apartment">Apartment</SelectItem>
+                  <SelectItem value="sublet">Sublet</SelectItem>
+                  <SelectItem value="room">Room</SelectItem>
+                  <SelectItem value="house">House</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -185,11 +274,10 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 id="bedrooms"
                 type="number"
                 value={formData.bedrooms}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, bedrooms: parseInt(e.target.value) }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, bedrooms: e.target.value }))}
                 placeholder="1"
                 className="rounded-xl"
+                min="0"
               />
             </div>
 
@@ -198,24 +286,25 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               <Input
                 id="bathrooms"
                 type="number"
+                step="0.5"
                 value={formData.bathrooms}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, bathrooms: parseInt(e.target.value) }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, bathrooms: e.target.value }))}
                 placeholder="1"
                 className="rounded-xl"
+                min="0"
               />
             </div>
 
-            <div className="md:col-span-2">
-              <Label htmlFor="location">Full Address</Label>
+            <div>
+              <Label htmlFor="square_feet">Square Feet</Label>
               <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
-                placeholder="123 Main St, Brooklyn, NY 11201"
+                id="square_feet"
+                type="number"
+                value={formData.square_feet}
+                onChange={(e) => setFormData((prev) => ({ ...prev, square_feet: e.target.value }))}
+                placeholder="900"
                 className="rounded-xl"
-                required
+                min="0"
               />
             </div>
 
@@ -233,12 +322,14 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
             </div>
 
             <div>
-              <Label htmlFor="lease_length">Lease Length</Label>
+              <Label htmlFor="available_until">Available Until</Label>
               <Input
-                id="lease_length"
-                value={formData.lease_length}
-                onChange={(e) => setFormData((prev) => ({ ...prev, lease_length: e.target.value }))}
-                placeholder="12 months"
+                id="available_until"
+                type="date"
+                value={formData.available_until}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, available_until: e.target.value }))
+                }
                 className="rounded-xl"
               />
             </div>
@@ -249,7 +340,7 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
                 <Input
                   value={currentAmenity}
                   onChange={(e) => setCurrentAmenity(e.target.value)}
-                  placeholder="Add amenity"
+                  placeholder="Add amenity (e.g., parking, laundry)"
                   className="rounded-xl"
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenity())}
                 />
@@ -281,63 +372,78 @@ export default function AddListingModal({ isOpen, onClose, onSubmit }) {
               )}
             </div>
 
-            <div className="md:col-span-2 space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="furnished"
-                  checked={formData.furnished}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({ ...prev, furnished: checked }))
-                  }
-                />
-                <Label htmlFor="furnished">Furnished</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="utilities"
-                  checked={formData.utilities_included}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({ ...prev, utilities_included: checked }))
-                  }
-                />
-                <Label htmlFor="utilities">Utilities Included</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="sublease"
-                  checked={formData.is_sublease}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({ ...prev, is_sublease: checked }))
-                  }
-                />
-                <Label htmlFor="sublease">This is a sublease</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="roommate"
-                  checked={formData.looking_for_roommate}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({ ...prev, looking_for_roommate: checked }))
-                  }
-                />
-                <Label htmlFor="roommate">Looking for roommate</Label>
-              </div>
+            <div className="md:col-span-2">
+              <Label htmlFor="images">Images (Max 10)</Label>
+              <Input
+                id="images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileSelect}
+                className="rounded-xl"
+              />
+              {selectedFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedFiles.map((file, index) => (
+                    <Badge key={index} variant="outline" className="gap-1">
+                      {file.name.substring(0, 20)}...
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="ml-1 hover:text-red-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="md:col-span-2">
-              <Label htmlFor="contact">Contact Information</Label>
+            <div>
+              <Label htmlFor="contact_email">Contact Email</Label>
               <Input
-                id="contact"
-                value={formData.contact_info}
-                onChange={(e) => setFormData((prev) => ({ ...prev, contact_info: e.target.value }))}
-                placeholder="Email or phone number"
+                id="contact_email"
+                type="email"
+                value={formData.contact_email}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, contact_email: e.target.value }))
+                }
+                placeholder="your.email@university.edu"
+                className="rounded-xl"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="contact_phone">Contact Phone</Label>
+              <Input
+                id="contact_phone"
+                type="tel"
+                value={formData.contact_phone}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, contact_phone: e.target.value }))
+                }
+                placeholder="+1-555-0100"
                 className="rounded-xl"
               />
             </div>
           </div>
 
+          {uploadProgress && (
+            <div className="flex items-center gap-2 text-cyan-600">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>{uploadProgress}</span>
+            </div>
+          )}
+
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="rounded-xl">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="rounded-xl"
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button

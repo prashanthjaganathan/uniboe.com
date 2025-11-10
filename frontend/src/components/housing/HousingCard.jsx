@@ -2,12 +2,15 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Bed, Bath, Wifi, Car, Heart, Share2, Star, Shield } from 'lucide-react';
+import { MapPin, Bed, Bath, Heart, Share2, Shield } from 'lucide-react';
 
 export default function HousingCard({ listing }) {
   const firstImage =
     listing.images?.[0] ||
     `https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop&crop=center`;
+
+  // Format the full address
+  const fullAddress = `${listing.city}, ${listing.state}${listing.zip_code ? ' ' + listing.zip_code : ''}`;
 
   return (
     <Card className="group border-0 bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden">
@@ -18,15 +21,15 @@ export default function HousingCard({ listing }) {
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute top-4 left-4 flex gap-2">
-          {listing.verified && (
+          {listing.is_active && (
             <Badge className="bg-emerald-500 text-white border-0">
               <Shield className="w-3 h-3 mr-1" />
-              Verified
+              Active
             </Badge>
           )}
-          {listing.is_sublease && (
+          {listing.property_type === 'sublet' && (
             <Badge variant="outline" className="bg-white/90 text-slate-700">
-              Sublease
+              Sublet
             </Badge>
           )}
         </div>
@@ -36,7 +39,9 @@ export default function HousingCard({ listing }) {
             variant="ghost"
             className="bg-white/80 hover:bg-white text-slate-600 hover:text-rose-600 transition-colors w-8 h-8"
           >
-            <Heart className="w-4 h-4" />
+            <Heart
+              className={`w-4 h-4 ${listing.is_liked_by_current_user ? 'fill-current text-rose-600' : ''}`}
+            />
           </Button>
           <Button
             size="icon"
@@ -64,22 +69,23 @@ export default function HousingCard({ listing }) {
 
           <div className="flex items-center text-slate-600 text-sm">
             <MapPin className="w-4 h-4 mr-2 text-rose-500" />
-            {listing.location}
+            {fullAddress}
           </div>
 
           <div className="flex items-center gap-4 text-sm text-slate-600">
-            {listing.bedrooms && (
+            {listing.bedrooms !== null && (
               <div className="flex items-center gap-1">
                 <Bed className="w-4 h-4" />
                 {listing.bedrooms} bed
               </div>
             )}
-            {listing.bathrooms && (
+            {listing.bathrooms !== null && (
               <div className="flex items-center gap-1">
                 <Bath className="w-4 h-4" />
                 {listing.bathrooms} bath
               </div>
             )}
+            {listing.square_feet && <div className="text-xs">{listing.square_feet} sq ft</div>}
           </div>
 
           {listing.amenities && listing.amenities.length > 0 && (
@@ -97,9 +103,9 @@ export default function HousingCard({ listing }) {
             </div>
           )}
 
-          {listing.distance_to_campus && (
-            <div className="text-sm text-emerald-600 font-medium">
-              {listing.distance_to_campus} to campus
+          {listing.like_count > 0 && (
+            <div className="text-sm text-slate-500">
+              {listing.like_count} {listing.like_count === 1 ? 'like' : 'likes'}
             </div>
           )}
 

@@ -229,7 +229,7 @@ class FeedService:
         current_user_id: Optional[UUID] = None,
         page: int = 1,
         page_size: int = 20,
-        exclude_own_posts: bool = True,
+        exclude_own_posts: bool = False,
     ) -> Dict[str, Any]:
         """
         Get paginated feed of posts.

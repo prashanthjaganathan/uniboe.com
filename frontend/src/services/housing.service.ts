@@ -7,6 +7,8 @@ import {
   HousingSearchFilters,
 } from '@/types/housing.types';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+
 export const housingService = {
   async createListing(data: HousingListingCreate): Promise<HousingListingResponse> {
     const response = await api.post<HousingListingResponse>('/housing/listings', data);
@@ -33,7 +35,7 @@ export const housingService = {
 
   async searchByLocation(query: string, page: number = 1, pageSize: number = 20): Promise<HousingListResponse> {
     const response = await api.get<HousingListResponse>('/housing/search', {
-      params: { query, page, page_size: pageSize }
+      params: { q: query, page, page_size: pageSize }
     });
     return response.data;
   },
@@ -78,5 +80,29 @@ export const housingService = {
     });
     return response.data;
   },
-};
 
+  async uploadMedia(files: File[]): Promise<{ image_urls: string[]; count: number }> {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error('Not authenticated');
+
+    const response = await fetch(`${API_BASE_URL}/housing/upload-media`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Media upload failed');
+    }
+
+    return await response.json();
+  },
+};

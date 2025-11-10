@@ -95,38 +95,40 @@ class BackendAdapter {
     Post: {
       list: async (orderBy = '-created_at', limit = 50) => {
         const token = this.auth.getToken();
-        const response = await fetch(`${API_BASE_URL}/posts?limit=${limit}`, {
+        const response = await fetch(`${API_BASE_URL}/feed?page=1&page_size=${limit}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
         if (!response.ok) throw new Error('Failed to fetch posts');
 
-        const posts = await response.json();
+        const data = await response.json();
+        const posts = data.posts || []; // Backend returns { posts, total, page, ... }
 
-        // Transform backend format to frontend1 format
+        // Transform backend format to frontend format
         return posts.map((post) => ({
           id: post.id,
           content: post.content,
           author_id: post.user_id,
           author_name: post.user?.full_name || 'Unknown',
-          author_avatar: post.user?.profile?.profile_image || null,
-          author_university: post.user?.profile?.university || null,
+          author_avatar: post.user?.profile_picture_url || null,
+          author_university: post.user?.university_name || null,
           images: post.media_urls || [],
-          likes: post.likes || [],
+          likes: [], // Backend doesn't return array of user IDs
           like_count: post.like_count || 0,
-          comments: [], // Backend doesn't support comments yet
-          comment_count: 0,
+          is_liked_by_current_user: post.is_liked_by_current_user || false,
+          comments: [],
+          comment_count: post.comment_count || 0,
           created_date: post.created_at,
-          type: 'general', // Backend doesn't have post types yet
-          location: post.user?.profile?.location || null,
-          university: post.user?.profile?.university || null,
-          tags: [], // Backend doesn't support tags yet
+          type: 'general',
+          location: null,
+          university: post.user?.university_name || null,
+          tags: [],
         }));
       },
 
       get: async (id) => {
         const token = this.auth.getToken();
-        const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/feed/posts/${id}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
@@ -138,17 +140,18 @@ class BackendAdapter {
           content: post.content,
           author_id: post.user_id,
           author_name: post.user?.full_name || 'Unknown',
-          author_avatar: post.user?.profile?.profile_image || null,
-          author_university: post.user?.profile?.university || null,
+          author_avatar: post.user?.profile_picture_url || null,
+          author_university: post.user?.university_name || null,
           images: post.media_urls || [],
-          likes: post.likes || [],
+          likes: [],
           like_count: post.like_count || 0,
+          is_liked_by_current_user: post.is_liked_by_current_user || false,
           comments: [],
-          comment_count: 0,
+          comment_count: post.comment_count || 0,
           created_date: post.created_at,
           type: 'general',
-          location: post.user?.profile?.location || null,
-          university: post.user?.profile?.university || null,
+          location: null,
+          university: post.user?.university_name || null,
           tags: [],
         };
       },
@@ -157,7 +160,7 @@ class BackendAdapter {
         const token = this.auth.getToken();
         if (!token) throw new Error('Authentication required');
 
-        const response = await fetch(`${API_BASE_URL}/posts`, {
+        const response = await fetch(`${API_BASE_URL}/feed/posts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -166,6 +169,7 @@ class BackendAdapter {
           body: JSON.stringify({
             content: postData.content,
             media_urls: postData.images || [],
+            media_types: postData.media_types || [],
           }),
         });
 
@@ -179,7 +183,7 @@ class BackendAdapter {
 
         // Handle likes update specially
         if (data.likes !== undefined) {
-          const response = await fetch(`${API_BASE_URL}/posts/${id}/like`, {
+          const response = await fetch(`${API_BASE_URL}/feed/posts/${id}/like`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -189,7 +193,8 @@ class BackendAdapter {
         }
 
         // Regular update
-        const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+        // ✅ FIXED: Changed from /posts/{id} to /feed/posts/{id}
+        const response = await fetch(`${API_BASE_URL}/feed/posts/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -209,7 +214,7 @@ class BackendAdapter {
         const token = this.auth.getToken();
         if (!token) throw new Error('Authentication required');
 
-        const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/feed/posts/${id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -314,121 +319,55 @@ class BackendAdapter {
     // HOUSING ENTITY
     Housing: {
       list: async (filters = {}) => {
+        const token = this.auth.getToken();
         const params = new URLSearchParams();
 
+        // Add filters
         if (filters.city) params.append('city', filters.city);
-        if (filters.country) params.append('country', filters.country);
+        if (filters.state) params.append('state', filters.state);
         if (filters.min_price) params.append('min_price', filters.min_price);
         if (filters.max_price) params.append('max_price', filters.max_price);
         if (filters.property_type) params.append('property_type', filters.property_type);
+        if (filters.bedrooms) params.append('bedrooms', filters.bedrooms);
+        if (filters.bathrooms) params.append('bathrooms', filters.bathrooms);
 
-        const response = await fetch(`${API_BASE_URL}/housing/search?${params}`);
+        const response = await fetch(`${API_BASE_URL}/housing/listings?${params}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
 
         if (!response.ok) throw new Error('Failed to fetch housing listings');
 
-        const listings = await response.json();
-
-        // Transform backend format to frontend1 format
-        return listings.map((listing) => ({
-          id: listing.id,
-          title: listing.title,
-          description: listing.description,
-          price: listing.price,
-          currency: 'USD', // Backend doesn't have currency field yet
-          location: listing.location,
-          city: listing.city,
-          country: listing.country,
-          latitude: null, // Backend doesn't have coordinates yet
-          longitude: null,
-          property_type: listing.property_type,
-          bedrooms: listing.bedrooms,
-          bathrooms: listing.bathrooms,
-          furnished: false, // Backend doesn't have this field yet
-          utilities_included: false, // Backend doesn't have this field yet
-          images: listing.images || [],
-          amenities: listing.amenities || [],
-          nearby_universities: [], // Backend doesn't have this field yet
-          distance_to_campus: listing.distance_to_campus,
-          available_from: listing.available_from,
-          lease_length: listing.lease_duration, // Backend uses 'lease_duration'
-          is_sublease: listing.is_sublease,
-          looking_for_roommate: listing.looking_for_roommate,
-          verified: false, // Backend doesn't have verification yet
-          contact_info: listing.contact_info,
-          created_at: listing.created_at,
-          landlord_id: listing.landlord_id,
-        }));
+        const data = await response.json();
+        return data.listings || [];
       },
 
       get: async (id) => {
-        const response = await fetch(`${API_BASE_URL}/housing/${id}`);
+        const token = this.auth.getToken();
+        const response = await fetch(`${API_BASE_URL}/housing/listings/${id}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
 
         if (!response.ok) throw new Error('Failed to fetch housing listing');
-
-        const listing = await response.json();
-        return {
-          id: listing.id,
-          title: listing.title,
-          description: listing.description,
-          price: listing.price,
-          currency: 'USD',
-          location: listing.location,
-          city: listing.city,
-          country: listing.country,
-          latitude: null,
-          longitude: null,
-          property_type: listing.property_type,
-          bedrooms: listing.bedrooms,
-          bathrooms: listing.bathrooms,
-          furnished: false,
-          utilities_included: false,
-          images: listing.images || [],
-          amenities: listing.amenities || [],
-          nearby_universities: [],
-          distance_to_campus: listing.distance_to_campus,
-          available_from: listing.available_from,
-          lease_length: listing.lease_duration,
-          is_sublease: listing.is_sublease,
-          looking_for_roommate: listing.looking_for_roommate,
-          verified: false,
-          contact_info: listing.contact_info,
-          created_at: listing.created_at,
-          landlord_id: listing.landlord_id,
-        };
+        return await response.json();
       },
 
       create: async (housingData) => {
         const token = this.auth.getToken();
         if (!token) throw new Error('Authentication required');
 
-        const response = await fetch(`${API_BASE_URL}/housing`, {
+        const response = await fetch(`${API_BASE_URL}/housing/listings`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            title: housingData.title,
-            description: housingData.description,
-            price: housingData.price,
-            location: housingData.location,
-            city: housingData.city,
-            country: housingData.country,
-            property_type: housingData.property_type,
-            bedrooms: housingData.bedrooms,
-            bathrooms: housingData.bathrooms,
-            images: housingData.images,
-            amenities: housingData.amenities,
-            distance_to_campus: housingData.distance_to_campus,
-            available_from: housingData.available_from,
-            lease_duration: housingData.lease_length, // Transform lease_length → lease_duration
-            is_sublease: housingData.is_sublease,
-            looking_for_roommate: housingData.looking_for_roommate,
-            contact_info: housingData.contact_info,
-          }),
+          body: JSON.stringify(housingData),
         });
 
-        if (!response.ok) throw new Error('Failed to create housing listing');
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || 'Failed to create housing listing');
+        }
         return await response.json();
       },
 
@@ -436,31 +375,13 @@ class BackendAdapter {
         const token = this.auth.getToken();
         if (!token) throw new Error('Authentication required');
 
-        const response = await fetch(`${API_BASE_URL}/housing/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/housing/listings/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            price: data.price,
-            location: data.location,
-            city: data.city,
-            country: data.country,
-            property_type: data.property_type,
-            bedrooms: data.bedrooms,
-            bathrooms: data.bathrooms,
-            images: data.images,
-            amenities: data.amenities,
-            distance_to_campus: data.distance_to_campus,
-            available_from: data.available_from,
-            lease_duration: data.lease_length,
-            is_sublease: data.is_sublease,
-            looking_for_roommate: data.looking_for_roommate,
-            contact_info: data.contact_info,
-          }),
+          body: JSON.stringify(data),
         });
 
         if (!response.ok) throw new Error('Failed to update housing listing');
@@ -471,7 +392,7 @@ class BackendAdapter {
         const token = this.auth.getToken();
         if (!token) throw new Error('Authentication required');
 
-        const response = await fetch(`${API_BASE_URL}/housing/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/housing/listings/${id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });

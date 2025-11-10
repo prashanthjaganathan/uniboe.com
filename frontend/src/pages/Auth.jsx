@@ -32,15 +32,14 @@ export default function Auth() {
     setLoginError('');
     setLoginLoading(true);
 
-    const result = await login(loginEmail, loginPassword);
-
-    if (result.success) {
+    try {
+      await login({ email: loginEmail, password: loginPassword });
       navigate('/home');
-    } else {
-      setLoginError(result.error);
+    } catch (error) {
+      setLoginError(error.message || 'Login failed');
+    } finally {
+      setLoginLoading(false);
     }
-
-    setLoginLoading(false);
   };
 
   const handleRegister = async (e) => {
@@ -49,36 +48,44 @@ export default function Auth() {
     setRegisterSuccess('');
     setRegisterLoading(true);
 
-    // Validate passwords match
-    if (registerPassword !== registerConfirmPassword) {
-      setRegisterError('Passwords do not match');
-      setRegisterLoading(false);
-      return;
-    }
+    try {
+      // Validate passwords match
+      if (registerPassword !== registerConfirmPassword) {
+        setRegisterError('Passwords do not match');
+        setRegisterLoading(false);
+        return;
+      }
 
-    // Extract domain from email
-    const emailParts = registerEmail.split('@');
-    if (emailParts.length !== 2) {
-      setRegisterError('Please enter a valid university email');
-      setRegisterLoading(false);
-      return;
-    }
+      // Extract domain from email
+      const emailParts = registerEmail.split('@');
+      if (emailParts.length !== 2) {
+        setRegisterError('Please enter a valid university email');
+        setRegisterLoading(false);
+        return;
+      }
 
-    const domain = emailParts[1];
+      const domain = emailParts[1];
 
-    const result = await register(registerName, registerEmail, domain, registerPassword);
+      // Call register with object parameter matching UserRegistrationRequest
+      const response = await register({
+        full_name: registerName,
+        university_email: registerEmail,
+        university_domain: domain,
+        password: registerPassword,
+      });
 
-    if (result.success) {
-      if (result.requiresConfirmation) {
-        setRegisterSuccess(result.message);
+      // Check if email confirmation is required
+      if (response.email_confirmation_required) {
+        setRegisterSuccess(response.message || 'Please check your email to confirm your account.');
       } else {
+        // Registration successful with immediate login
         navigate('/home');
       }
-    } else {
-      setRegisterError(result.error);
+    } catch (error) {
+      setRegisterError(error.message || 'Registration failed');
+    } finally {
+      setRegisterLoading(false);
     }
-
-    setRegisterLoading(false);
   };
 
   return (

@@ -4,12 +4,13 @@
  */
 
 import { base44 } from '../api/backendAdapter';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
 export async function InvokeLLM(message) {
   try {
     // This would call the backend Olive chat API
     // For now, return a placeholder response
-    const response = await fetch('http://localhost:8000/api/olive/chat', {
+    const response = await fetch(`${API_BASE_URL}/olive/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

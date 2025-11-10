@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, MapPin, Calendar } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
 const postTypeColors = {
@@ -16,7 +16,9 @@ const postTypeColors = {
 
 export default function PostCard({ post, currentUser, onLike }) {
   const [showComments, setShowComments] = useState(false);
-  const isLiked = post.likes?.includes(currentUser?.id);
+
+  // ✅ FIXED: Use backend's is_liked_by_current_user instead of checking likes array
+  const isLiked = post.is_liked_by_current_user;
 
   return (
     <Card className="border-0 bg-white/95 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden">
@@ -25,57 +27,50 @@ export default function PostCard({ post, currentUser, onLike }) {
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12">
               <AvatarImage
-                src={`https://ui-avatars.com/api/?name=${post.created_by}&background=00CFFF&color=fff`}
+                src={
+                  post.user?.profile_picture_url ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(post.user?.full_name || 'User')}&background=00CFFF&color=fff`
+                }
               />
               <AvatarFallback className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
-                {post.created_by?.charAt(0)?.toUpperCase()}
+                {post.user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold text-slate-900">{post.created_by?.split('@')[0]}</p>
+              <p className="font-semibold text-slate-900">
+                {post.user?.full_name || 'Unknown User'}
+              </p>
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <Calendar className="w-3 h-3" />
-                {format(new Date(post.created_date), 'MMM d, yyyy')}
-                {post.location && (
+                {format(new Date(post.created_at), 'MMM d, yyyy')}
+                {post.user?.university_name && (
                   <>
                     <span>•</span>
-                    <MapPin className="w-3 h-3" />
-                    {post.location}
+                    {post.user.university_name}
                   </>
                 )}
               </div>
             </div>
           </div>
-          <Badge className={postTypeColors[post.type] || 'bg-slate-100 text-slate-700'}>
-            {post.type}
-          </Badge>
         </div>
       </CardHeader>
 
       <CardContent className="px-6 pb-6 space-y-4">
-        <div className="prose prose-slate max-w-none">
-          <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{post.content}</p>
-        </div>
-
-        {post.images && post.images.length > 0 && (
-          <div className="grid grid-cols-1 gap-3 rounded-xl overflow-hidden">
-            {post.images.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt="Post image"
-                className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300 rounded-xl"
-              />
-            ))}
+        {post.content && (
+          <div className="prose prose-slate max-w-none">
+            <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{post.content}</p>
           </div>
         )}
 
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                #{tag}
-              </Badge>
+        {post.media_urls && post.media_urls.length > 0 && (
+          <div className="grid grid-cols-1 gap-3 rounded-xl overflow-hidden">
+            {post.media_urls.map((url, index) => (
+              <img
+                key={index}
+                src={url}
+                alt={`Post media ${index + 1}`}
+                className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300 rounded-xl"
+              />
             ))}
           </div>
         )}
@@ -93,7 +88,7 @@ export default function PostCard({ post, currentUser, onLike }) {
               }`}
             >
               <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-              {post.likes?.length || 0}
+              {post.like_count || 0}
             </Button>
             <Button
               variant="ghost"
@@ -102,7 +97,7 @@ export default function PostCard({ post, currentUser, onLike }) {
               className="gap-2 text-slate-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-xl transition-all duration-200"
             >
               <MessageCircle className="w-4 h-4" />
-              {post.comments?.length || 0}
+              {post.comment_count || 0}
             </Button>
             <Button
               variant="ghost"

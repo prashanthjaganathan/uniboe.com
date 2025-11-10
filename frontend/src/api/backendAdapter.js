@@ -95,38 +95,40 @@ class BackendAdapter {
     Post: {
       list: async (orderBy = '-created_at', limit = 50) => {
         const token = this.auth.getToken();
-        const response = await fetch(`${API_BASE_URL}/posts?limit=${limit}`, {
+        const response = await fetch(`${API_BASE_URL}/feed?page=1&page_size=${limit}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
         if (!response.ok) throw new Error('Failed to fetch posts');
 
-        const posts = await response.json();
+        const data = await response.json();
+        const posts = data.posts || []; // Backend returns { posts, total, page, ... }
 
-        // Transform backend format to frontend1 format
+        // Transform backend format to frontend format
         return posts.map((post) => ({
           id: post.id,
           content: post.content,
           author_id: post.user_id,
           author_name: post.user?.full_name || 'Unknown',
-          author_avatar: post.user?.profile?.profile_image || null,
-          author_university: post.user?.profile?.university || null,
+          author_avatar: post.user?.profile_picture_url || null,
+          author_university: post.user?.university_name || null,
           images: post.media_urls || [],
-          likes: post.likes || [],
+          likes: [], // Backend doesn't return array of user IDs
           like_count: post.like_count || 0,
-          comments: [], // Backend doesn't support comments yet
-          comment_count: 0,
+          is_liked_by_current_user: post.is_liked_by_current_user || false,
+          comments: [],
+          comment_count: post.comment_count || 0,
           created_date: post.created_at,
-          type: 'general', // Backend doesn't have post types yet
-          location: post.user?.profile?.location || null,
-          university: post.user?.profile?.university || null,
-          tags: [], // Backend doesn't support tags yet
+          type: 'general',
+          location: null,
+          university: post.user?.university_name || null,
+          tags: [],
         }));
       },
 
       get: async (id) => {
         const token = this.auth.getToken();
-        const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/feed/posts/${id}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
@@ -138,17 +140,18 @@ class BackendAdapter {
           content: post.content,
           author_id: post.user_id,
           author_name: post.user?.full_name || 'Unknown',
-          author_avatar: post.user?.profile?.profile_image || null,
-          author_university: post.user?.profile?.university || null,
+          author_avatar: post.user?.profile_picture_url || null,
+          author_university: post.user?.university_name || null,
           images: post.media_urls || [],
-          likes: post.likes || [],
+          likes: [],
           like_count: post.like_count || 0,
+          is_liked_by_current_user: post.is_liked_by_current_user || false,
           comments: [],
-          comment_count: 0,
+          comment_count: post.comment_count || 0,
           created_date: post.created_at,
           type: 'general',
-          location: post.user?.profile?.location || null,
-          university: post.user?.profile?.university || null,
+          location: null,
+          university: post.user?.university_name || null,
           tags: [],
         };
       },
@@ -157,7 +160,7 @@ class BackendAdapter {
         const token = this.auth.getToken();
         if (!token) throw new Error('Authentication required');
 
-        const response = await fetch(`${API_BASE_URL}/posts`, {
+        const response = await fetch(`${API_BASE_URL}/feed/posts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -166,6 +169,7 @@ class BackendAdapter {
           body: JSON.stringify({
             content: postData.content,
             media_urls: postData.images || [],
+            media_types: postData.media_types || [],
           }),
         });
 
@@ -179,7 +183,7 @@ class BackendAdapter {
 
         // Handle likes update specially
         if (data.likes !== undefined) {
-          const response = await fetch(`${API_BASE_URL}/posts/${id}/like`, {
+          const response = await fetch(`${API_BASE_URL}/feed/posts/${id}/like`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -189,7 +193,8 @@ class BackendAdapter {
         }
 
         // Regular update
-        const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+        // ✅ FIXED: Changed from /posts/{id} to /feed/posts/{id}
+        const response = await fetch(`${API_BASE_URL}/feed/posts/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -209,7 +214,7 @@ class BackendAdapter {
         const token = this.auth.getToken();
         if (!token) throw new Error('Authentication required');
 
-        const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/feed/posts/${id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });

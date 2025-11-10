@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/backendAdapter';
+import { feedService } from '@/services/feed.service';
+import { authService } from '@/services/auth.service';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -13,11 +14,12 @@ export default function FeedPage() {
 
   const queryClient = useQueryClient();
 
-  const { data: posts = [], isLoading } = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => base44.entities.Post.list('-created_date', 50),
-    initialData: [],
+  const { data: feedData, isLoading } = useQuery({
+    queryKey: ['feed'],
+    queryFn: () => feedService.getFeed(1, 20, false),
   });
+
+  const posts = feedData?.posts ?? [];
 
   useEffect(() => {
     loadUser();
@@ -25,7 +27,7 @@ export default function FeedPage() {
 
   const loadUser = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await authService.getCurrentUser();
       setUser(currentUser);
     } catch (error) {
       console.error('Error loading user:', error);
@@ -33,17 +35,17 @@ export default function FeedPage() {
   };
 
   const createPostMutation = useMutation({
-    mutationFn: (postData) => base44.entities.Post.create(postData),
+    mutationFn: (postData) => feedService.createPost(postData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
       setShowCreatePost(false);
     },
   });
 
   const updatePostMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Post.update(id, data),
+    mutationFn: ({ id, data }) => feedService.updatePost(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
   });
 
@@ -54,12 +56,14 @@ export default function FeedPage() {
   const handleLikePost = async (postId) => {
     try {
       const post = posts.find((p) => p.id === postId);
-      const isLiked = post.likes?.includes(user.id);
-      const updatedLikes = isLiked
-        ? post.likes.filter((id) => id !== user.id)
-        : [...(post.likes || []), user.id];
+      if (!post) return;
 
-      updatePostMutation.mutate({ id: postId, data: { likes: updatedLikes } });
+      if (post.is_liked_by_current_user) {
+        await feedService.unlikePost(postId);
+      } else {
+        await feedService.likePost(postId);
+      }
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
     } catch (error) {
       console.error('Error liking post:', error);
     }

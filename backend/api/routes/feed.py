@@ -210,6 +210,7 @@ async def create_post(
 async def get_feed(
     page: int = Query(1, ge=1, description="Page number (starts at 1)"),
     page_size: int = Query(20, ge=1, le=100, description="Posts per page (max 100)"),
+    exclude_own_posts: bool = Query(False, description="Whether to exclude own posts"),
     current_user: Optional[UserResponse] = Depends(get_optional_current_user),
     feed_service: FeedService = Depends(get_feed_service),
 ) -> PostListResponse:
@@ -222,6 +223,7 @@ async def get_feed(
     Args:
         page: Page number (default 1)
         page_size: Number of posts per page (default 20, max 100)
+        exclude_own_posts: Whether to exclude own posts (default False)
         current_user: Optional authenticated user
         feed_service: Feed service dependency
 
@@ -246,7 +248,7 @@ async def get_feed(
             current_user_id=current_user_id,
             page=page,
             page_size=page_size,
-            exclude_own_posts=bool(current_user_id),
+            exclude_own_posts=exclude_own_posts,
         )
 
         return PostListResponse(

@@ -4,7 +4,7 @@ Chat API routes.
 Endpoints for managing conversations and encrypted messages.
 """
 
-from typing import List
+from typing import Any, Dict, List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -514,6 +514,93 @@ async def search_messages(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to search messages: {str(e)}",
+        )
+
+
+@router.get(
+    "/users/search",
+    response_model=List[Dict[str, Any]],
+    status_code=status.HTTP_200_OK,
+    summary="Quick user search for chat",
+    description="""Quick search for users by name to start a conversation.
+    Optimized for autocomplete.""",
+)
+async def search_users_for_chat(
+    q: str = Query(..., min_length=1, max_length=100, description="Search query (user name)"),
+    limit: int = Query(10, ge=1, le=50, description="Max results to return (default 10, max 50)"),
+    current_user: UserResponse = Depends(get_current_user),
+) -> List[Dict[str, Any]]:
+    """
+    Quick search for users by name to start conversations.
+
+    Optimized for autocomplete/typeahead functionality.
+    Searches by full name (case-insensitive).
+    Excludes the current user from results.
+
+    Args:
+        q: Search query string (min 1 character).
+        limit: Maximum number of results (default 10, max 50).
+        current_user: Authenticated user.
+
+    Returns:
+        List[Dict]: List of matching users with basic info (id, name, university, profile picture).
+
+    Raises:
+        HTTPException 401: Not authenticated.
+        HTTPException 500: Server error.
+
+    Example:
+        >>> GET /api/chat/users/search?q=john&limit=10
+
+        Response:
+        [
+          {
+            "id": "123e4567-e89b-12d3-a456-426614174000",
+            "full_name": "John Doe",
+            "university_name": "New York University",
+            "profile_picture_url": "https://example.com/pic.jpg",
+            "university_email": "john.doe@nyu.edu"
+          }
+        ]
+    """
+    try:
+        from backend.db import supabase
+
+        # Search users by name (case-insensitive)
+        # Join profiles with universities table using university_id
+        response = (
+            supabase.table("profiles")
+            .select(
+                """id, full_name, profile_picture_url, university_email, university_id,
+                universities!profiles_university_id_fkey(name)"""
+            )
+            .ilike("full_name", f"%{q}%")
+            .neq("id", str(current_user.id))  # Exclude current user
+            .order("full_name")
+            .limit(limit)
+            .execute()
+        )
+
+        # Transform results to simple format
+        users = []
+        for profile in response.data:
+            user_data = {
+                "id": profile["id"],
+                "full_name": profile["full_name"],
+                "university_name": (
+                    profile["universities"]["name"] if profile.get("universities") else None
+                ),
+                "profile_picture_url": profile.get("profile_picture_url"),
+                "university_email": profile.get("university_email"),
+            }
+            users.append(user_data)
+
+        return users
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to search users: {str(e)}",
         )
 
 

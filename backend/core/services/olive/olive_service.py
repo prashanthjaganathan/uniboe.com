@@ -415,17 +415,25 @@ class OliveService:
                 )
 
             # Update title
-            update_response = (
+            _ = (
                 supabase.table("olive_conversations")
                 .update({"title": title})
                 .eq("id", str(conversation_id))
                 .execute()
             )
 
-            if not update_response.data:
-                raise Exception("Failed to update conversation title")
+            # Fetch the updated conversation to ensure we have the latest data
+            conv_response = (
+                supabase.table("olive_conversations")
+                .select("*")
+                .eq("id", str(conversation_id))
+                .execute()
+            )
 
-            conversation = update_response.data[0]
+            if not conv_response.data:
+                raise Exception("Failed to fetch updated conversation")
+
+            conversation = conv_response.data[0]
 
             # Get message count
             msg_count_response = (

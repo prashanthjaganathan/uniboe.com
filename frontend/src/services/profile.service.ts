@@ -34,10 +34,12 @@ export const profileService = {
     return response.data;
   },
 
-  async uploadProfilePicture(file: File): Promise<{ profile_picture_url: string, message: string }> {
+  async uploadProfilePicture(
+    file: File
+  ): Promise<{ profile_picture_url: string; message: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    
+
     const response = await api.post('/profile/me/picture', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -55,4 +57,3 @@ export const profileService = {
     return response.data;
   },
 };
-

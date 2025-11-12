@@ -12,9 +12,9 @@ export const useToast = () => {
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = Math.random().toString(36).substring(7);
     const toast: Toast = { id, message, type };
-    
+
     setToasts((prev) => [...prev, toast]);
-    
+
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 5000);
@@ -33,4 +33,3 @@ export const useToast = () => {
     info: (message: string) => showToast(message, 'info'),
   };
 };
-

@@ -1,6 +1,12 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { authService } from '@/services/auth.service';
-import { UserResponse, UserLoginRequest, UserRegistrationRequest, TokenResponse, RegistrationConfirmationResponse } from '@/types/auth.types';
+import {
+  UserResponse,
+  UserLoginRequest,
+  UserRegistrationRequest,
+  TokenResponse,
+  RegistrationConfirmationResponse,
+} from '@/types/auth.types';
 
 interface AuthContextType {
   user: UserResponse | null;
@@ -8,7 +14,9 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (data: UserLoginRequest) => Promise<void>;
-  register: (data: UserRegistrationRequest) => Promise<TokenResponse | RegistrationConfirmationResponse>;
+  register: (
+    data: UserRegistrationRequest
+  ) => Promise<TokenResponse | RegistrationConfirmationResponse>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
@@ -49,16 +57,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('auth_user', JSON.stringify(response.user));
   };
 
-  const register = async (data: UserRegistrationRequest): Promise<TokenResponse | RegistrationConfirmationResponse> => {
+  const register = async (
+    data: UserRegistrationRequest
+  ): Promise<TokenResponse | RegistrationConfirmationResponse> => {
     const response = await authService.register(data);
-    
+
     if ('access_token' in response) {
       setToken(response.access_token);
       setUser(response.user);
       localStorage.setItem('auth_token', response.access_token);
       localStorage.setItem('auth_user', JSON.stringify(response.user));
     }
-    
+
     return response;
   };
 
@@ -100,4 +110,3 @@ export const useAuth = () => {
   }
   return context;
 };
-

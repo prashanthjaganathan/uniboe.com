@@ -23,7 +23,7 @@ export const housingService = {
     sortOrder: string = 'desc'
   ): Promise<HousingListResponse> {
     const response = await api.get<HousingListResponse>('/housing/listings', {
-      params: { ...filters, page, page_size: pageSize, sort_by: sortBy, sort_order: sortOrder }
+      params: { ...filters, page, page_size: pageSize, sort_by: sortBy, sort_order: sortOrder },
     });
     return response.data;
   },
@@ -33,21 +33,33 @@ export const housingService = {
     return response.data;
   },
 
-  async searchByLocation(query: string, page: number = 1, pageSize: number = 20): Promise<HousingListResponse> {
+  async searchByLocation(
+    query: string,
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<HousingListResponse> {
     const response = await api.get<HousingListResponse>('/housing/search', {
-      params: { q: query, page, page_size: pageSize }
+      params: { q: query, page, page_size: pageSize },
     });
     return response.data;
   },
 
-  async getUserListings(userId: string, page: number = 1, pageSize: number = 20, includeInactive: boolean = false): Promise<HousingListResponse> {
+  async getUserListings(
+    userId: string,
+    page: number = 1,
+    pageSize: number = 20,
+    includeInactive: boolean = false
+  ): Promise<HousingListResponse> {
     const response = await api.get<HousingListResponse>(`/housing/users/${userId}/listings`, {
-      params: { page, page_size: pageSize, include_inactive: includeInactive }
+      params: { page, page_size: pageSize, include_inactive: includeInactive },
     });
     return response.data;
   },
 
-  async updateListing(listingId: string, data: HousingListingUpdate): Promise<HousingListingResponse> {
+  async updateListing(
+    listingId: string,
+    data: HousingListingUpdate
+  ): Promise<HousingListingResponse> {
     const response = await api.put<HousingListingResponse>(`/housing/listings/${listingId}`, data);
     return response.data;
   },
@@ -57,12 +69,16 @@ export const housingService = {
   },
 
   async activateListing(listingId: string): Promise<HousingListingResponse> {
-    const response = await api.post<HousingListingResponse>(`/housing/listings/${listingId}/activate`);
+    const response = await api.post<HousingListingResponse>(
+      `/housing/listings/${listingId}/activate`
+    );
     return response.data;
   },
 
   async deactivateListing(listingId: string): Promise<HousingListingResponse> {
-    const response = await api.post<HousingListingResponse>(`/housing/listings/${listingId}/deactivate`);
+    const response = await api.post<HousingListingResponse>(
+      `/housing/listings/${listingId}/deactivate`
+    );
     return response.data;
   },
 
@@ -74,9 +90,18 @@ export const housingService = {
     await api.delete(`/housing/listings/${listingId}/like`);
   },
 
-  async getListingLikes(listingId: string, page: number = 1, pageSize: number = 50): Promise<{ likes: unknown[]; total: number; page: number; page_size: number }> {
-    const response = await api.get<{ likes: unknown[]; total: number; page: number; page_size: number }>(`/housing/listings/${listingId}/likes`, {
-      params: { page, page_size: pageSize }
+  async getListingLikes(
+    listingId: string,
+    page: number = 1,
+    pageSize: number = 50
+  ): Promise<{ likes: unknown[]; total: number; page: number; page_size: number }> {
+    const response = await api.get<{
+      likes: unknown[];
+      total: number;
+      page: number;
+      page_size: number;
+    }>(`/housing/listings/${listingId}/likes`, {
+      params: { page, page_size: pageSize },
     });
     return response.data;
   },

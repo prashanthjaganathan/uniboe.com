@@ -32,4 +32,3 @@ export interface RegistrationConfirmationResponse {
   user: UserResponse;
   email_confirmation_required: boolean;
 }
-

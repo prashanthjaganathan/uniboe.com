@@ -8,8 +8,13 @@ import {
 } from '@/types/auth.types';
 
 export const authService = {
-  async register(data: UserRegistrationRequest): Promise<TokenResponse | RegistrationConfirmationResponse> {
-    const response = await api.post<TokenResponse | RegistrationConfirmationResponse>('/auth/register', data);
+  async register(
+    data: UserRegistrationRequest
+  ): Promise<TokenResponse | RegistrationConfirmationResponse> {
+    const response = await api.post<TokenResponse | RegistrationConfirmationResponse>(
+      '/auth/register',
+      data
+    );
     return response.data;
   },
 
@@ -37,4 +42,3 @@ export const authService = {
     return response.data;
   },
 };
-

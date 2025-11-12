@@ -51,4 +51,3 @@ export interface OliveChatResponse {
   user_message: OliveMessageResponse;
   assistant_message: OliveMessageResponse;
 }
-

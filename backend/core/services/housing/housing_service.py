@@ -760,6 +760,19 @@ class HousingService:
             if not response.data:
                 raise Exception("Failed to like listing: No data returned.")
 
+            # Get current like count and increment it
+            current_listing = (
+                supabase.table("housing_listings")
+                .select("like_count")
+                .eq("id", str(listing_id))
+                .execute()
+            )
+            if current_listing.data:
+                current_count = current_listing.data[0].get("like_count", 0)
+                supabase.table("housing_listings").update({"like_count": current_count + 1}).eq(
+                    "id", str(listing_id)
+                ).execute()
+
             created_like = response.data[0]
             user_info = await self._get_user_profile_for_like(user_id)
 
@@ -800,7 +813,20 @@ class HousingService:
                 .execute()
             )
 
-            # Supabase returns empty data if no rows affected, but that's okay
+            # Get current like count and decrement it (ensure it doesn't go below 0)
+            current_listing = (
+                supabase.table("housing_listings")
+                .select("like_count")
+                .eq("id", str(listing_id))
+                .execute()
+            )
+            if current_listing.data:
+                current_count = current_listing.data[0].get("like_count", 0)
+                new_count = max(0, current_count - 1)  # Ensure it doesn't go negative
+                supabase.table("housing_listings").update({"like_count": new_count}).eq(
+                    "id", str(listing_id)
+                ).execute()
+
             return True
 
         except Exception as e:
@@ -1056,24 +1082,76 @@ class HousingService:
             "university_name": university_name,
         }
 
+    def _safe_parse_datetime(self, datetime_str: str) -> datetime:
+        """
+        Safely parse datetime strings, handling malformed microseconds.
+
+        Some timestamps from Supabase may have 4-digit microseconds instead of 6,
+        which causes fromisoformat to fail. This function normalizes them.
+        """
+        import re
+
+        # Fix microseconds: if there are 4 digits, pad with zeros to make 6
+        # Pattern: matches timestamps like '2025-11-11T00:17:33.7562+00:00'
+        pattern = r"(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})\.(\d{4})([+-]\d{2}:\d{2})"
+        match = re.match(pattern, datetime_str)
+
+        if match:
+            # Pad microseconds to 6 digits
+            date_part, microseconds, timezone = match.groups()
+            microseconds_padded = microseconds.ljust(6, "0")
+            datetime_str = f"{date_part}.{microseconds_padded}{timezone}"
+
+        return datetime.fromisoformat(datetime_str)
+
+    def _safe_parse_date(self, date_str: str):
+        """
+        Safely parse date strings, handling malformed timestamps.
+        """
+        import re
+        from datetime import date
+
+        # If it's a full datetime string (with time component), extract just the date
+        if "T" in date_str:
+            # Extract just the date part before the 'T'
+            date_str = date_str.split("T")[0]
+
+        try:
+            return date.fromisoformat(date_str)
+        except ValueError:
+            # If it still fails, try to parse and fix it
+            pattern = r"(\d{4}-\d{2}-\d{2})"
+            match = re.match(pattern, date_str)
+            if match:
+                return date.fromisoformat(match.group(1))
+            # If all else fails, return None
+            return None
+
     def _format_listing_response(
         self, listing_data: Dict[str, Any], user_info: Dict[str, Any], is_liked: bool
     ) -> Dict[str, Any]:
         """Format listing data for API response."""
-        from datetime import date
 
         # Parse dates
         available_from = None
         if listing_data.get("available_from"):
             if isinstance(listing_data["available_from"], str):
-                available_from = date.fromisoformat(listing_data["available_from"])
+                try:
+                    available_from = self._safe_parse_date(listing_data["available_from"])
+                except (ValueError, AttributeError):
+                    # If parsing fails, skip this field
+                    available_from = None
             else:
                 available_from = listing_data["available_from"]
 
         available_until = None
         if listing_data.get("available_until"):
             if isinstance(listing_data["available_until"], str):
-                available_until = date.fromisoformat(listing_data["available_until"])
+                try:
+                    available_until = self._safe_parse_date(listing_data["available_until"])
+                except (ValueError, AttributeError):
+                    # If parsing fails, skip this field
+                    available_until = None
             else:
                 available_until = listing_data["available_until"]
 
@@ -1101,12 +1179,12 @@ class HousingService:
             "view_count": listing_data.get("view_count", 0),
             "like_count": listing_data.get("like_count", 0),
             "created_at": (
-                datetime.fromisoformat(listing_data["created_at"])
+                self._safe_parse_datetime(listing_data["created_at"])
                 if isinstance(listing_data["created_at"], str)
                 else listing_data["created_at"]
             ),
             "updated_at": (
-                datetime.fromisoformat(listing_data["updated_at"])
+                self._safe_parse_datetime(listing_data["updated_at"])
                 if isinstance(listing_data["updated_at"], str)
                 else listing_data["updated_at"]
             ),

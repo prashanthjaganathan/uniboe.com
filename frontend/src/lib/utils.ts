@@ -1,30 +1,30 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function formatDate(date: string | Date): string {
-  const d = new Date(date)
-  const now = new Date()
-  const diff = now.getTime() - d.getTime()
-  
-  const seconds = Math.floor(diff / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
-  const days = Math.floor(hours / 24)
-  
+  const d = new Date(date);
+  const now = new Date();
+  const diff = now.getTime() - d.getTime();
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
   if (days > 7) {
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   } else if (days > 0) {
-    return `${days}d ago`
+    return `${days}d ago`;
   } else if (hours > 0) {
-    return `${hours}h ago`
+    return `${hours}h ago`;
   } else if (minutes > 0) {
-    return `${minutes}m ago`
+    return `${minutes}m ago`;
   } else {
-    return 'Just now'
+    return 'Just now';
   }
 }
 
@@ -34,6 +34,5 @@ export function formatPrice(price: number): string {
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(price)
+  }).format(price);
 }
-

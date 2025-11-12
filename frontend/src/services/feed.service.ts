@@ -13,9 +13,13 @@ export const feedService = {
     return response.data;
   },
 
-  async getFeed(page: number = 1, pageSize: number = 20, excludeOwnPosts: boolean = false): Promise<PostListResponse> {
+  async getFeed(
+    page: number = 1,
+    pageSize: number = 20,
+    excludeOwnPosts: boolean = false
+  ): Promise<PostListResponse> {
     const response = await api.get<PostListResponse>('/feed', {
-      params: { page, page_size: pageSize, exclude_own_posts: excludeOwnPosts }
+      params: { page, page_size: pageSize, exclude_own_posts: excludeOwnPosts },
     });
     return response.data;
   },
@@ -25,9 +29,13 @@ export const feedService = {
     return response.data;
   },
 
-  async getUserPosts(userId: string, page: number = 1, pageSize: number = 20): Promise<PostListResponse> {
+  async getUserPosts(
+    userId: string,
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<PostListResponse> {
     const response = await api.get<PostListResponse>(`/feed/users/${userId}/posts`, {
-      params: { page, page_size: pageSize }
+      params: { page, page_size: pageSize },
     });
     return response.data;
   },
@@ -50,11 +58,14 @@ export const feedService = {
     await api.delete(`/feed/posts/${postId}/like`);
   },
 
-  async getPostLikes(postId: string, page: number = 1, pageSize: number = 50): Promise<{ likes: LikeResponse[], total: number }> {
+  async getPostLikes(
+    postId: string,
+    page: number = 1,
+    pageSize: number = 50
+  ): Promise<{ likes: LikeResponse[]; total: number }> {
     const response = await api.get(`/feed/posts/${postId}/likes`, {
-      params: { page, page_size: pageSize }
+      params: { page, page_size: pageSize },
     });
     return response.data;
   },
 };
-

@@ -49,32 +49,6 @@ export default function HomePage() {
               </div>
               <span className="font-bold text-slate-900 text-xl">Uniboe</span>
             </div>
-            <div className="hidden md:flex items-center gap-8">
-              <Link
-                to={createPageUrl('Feed')}
-                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
-              >
-                Feed
-              </Link>
-              <Link
-                to={createPageUrl('Housing')}
-                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
-              >
-                Housing
-              </Link>
-              <Link
-                to={createPageUrl('News')}
-                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
-              >
-                News & Legal
-              </Link>
-              <Link
-                to={createPageUrl('Profile')}
-                className="text-slate-600 hover:text-cyan-600 font-medium transition-colors"
-              >
-                Profile
-              </Link>
-            </div>
           </div>
         </nav>
 

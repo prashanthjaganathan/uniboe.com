@@ -19,20 +19,31 @@ export const oliveService = {
     return response.data;
   },
 
-  async getConversations(page: number = 1, pageSize: number = 20): Promise<OliveConversationListResponse> {
+  async getConversations(
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<OliveConversationListResponse> {
     const response = await api.get<OliveConversationListResponse>('/olive/conversations', {
-      params: { page, page_size: pageSize }
+      params: { page, page_size: pageSize },
     });
     return response.data;
   },
 
   async getConversation(conversationId: string): Promise<OliveConversationDetailResponse> {
-    const response = await api.get<OliveConversationDetailResponse>(`/olive/conversations/${conversationId}`);
+    const response = await api.get<OliveConversationDetailResponse>(
+      `/olive/conversations/${conversationId}`
+    );
     return response.data;
   },
 
-  async updateConversationTitle(conversationId: string, title: string): Promise<OliveConversationResponse> {
-    const response = await api.put<OliveConversationResponse>(`/olive/conversations/${conversationId}/title`, { title });
+  async updateConversationTitle(
+    conversationId: string,
+    title: string
+  ): Promise<OliveConversationResponse> {
+    const response = await api.put<OliveConversationResponse>(
+      `/olive/conversations/${conversationId}/title`,
+      { title }
+    );
     return response.data;
   },
 
@@ -40,4 +51,3 @@ export const oliveService = {
     await api.delete(`/olive/conversations/${conversationId}`);
   },
 };
-

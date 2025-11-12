@@ -69,7 +69,7 @@ export default function PostCard({ post, currentUser, onLike }) {
                 key={index}
                 src={url}
                 alt={`Post media ${index + 1}`}
-                className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300 rounded-xl"
+                className="w-full object-contain max-h-[600px] bg-slate-50 rounded-xl"
               />
             ))}
           </div>

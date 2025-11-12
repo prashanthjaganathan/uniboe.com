@@ -44,4 +44,3 @@ export interface LikeResponse {
   created_at: string;
   user: PostUser;
 }
-

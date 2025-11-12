@@ -65,4 +65,3 @@ export interface ProfileStatsResponse {
   connections_count: number;
   joined_date: string;
 }
-

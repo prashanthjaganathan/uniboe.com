@@ -38,3 +38,4 @@ node_modules/
 # Cache
 .vscode/
 .cursor/
+.vercel

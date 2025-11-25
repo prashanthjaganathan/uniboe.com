@@ -543,8 +543,10 @@ class FeedService:
             >>> print(f"Liked at: {like['created_at']}")
         """
         try:
-            # Check if post exists
-            post_check = supabase.table("posts").select("id").eq("id", str(post_id)).execute()
+            # Check if post exists and get current like count
+            post_check = (
+                supabase.table("posts").select("id, like_count").eq("id", str(post_id)).execute()
+            )
 
             if not post_check.data or len(post_check.data) == 0:
                 raise PostNotFoundError(f"Post {post_id} not found")
@@ -571,6 +573,12 @@ class FeedService:
                     raise ValidationError("Failed to create like")
 
                 like_data = response.data[0]
+
+                # Increment like count in posts table
+                current_count = post_check.data[0].get("like_count", 0)
+                supabase.table("posts").update({"like_count": current_count + 1}).eq(
+                    "id", str(post_id)
+                ).execute()
 
             # Get user info for the like
             user_info = (
@@ -622,14 +630,33 @@ class FeedService:
             >>> print(f"Unliked: {success}")
         """
         try:
-            # Delete the like
-            _ = (
+            # Check if the like exists before deleting
+            existing_like = (
                 supabase.table("post_likes")
-                .delete()
+                .select("id")
                 .eq("post_id", str(post_id))
                 .eq("user_id", str(user_id))
                 .execute()
             )
+
+            # Delete the like
+            supabase.table("post_likes").delete().eq("post_id", str(post_id)).eq(
+                "user_id", str(user_id)
+            ).execute()
+
+            # Only decrement if like existed
+            if existing_like.data and len(existing_like.data) > 0:
+                # Get current like count and decrement
+                post_check = (
+                    supabase.table("posts").select("like_count").eq("id", str(post_id)).execute()
+                )
+
+                if post_check.data and len(post_check.data) > 0:
+                    current_count = post_check.data[0].get("like_count", 0)
+                    new_count = max(0, current_count - 1)  # Ensure it doesn't go below 0
+                    supabase.table("posts").update({"like_count": new_count}).eq(
+                        "id", str(post_id)
+                    ).execute()
 
             # Return True even if like didn't exist (idempotent)
             return True

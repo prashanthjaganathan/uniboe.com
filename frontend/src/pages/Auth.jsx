@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GraduationCap, AlertCircle } from 'lucide-react';
+import { GraduationCap, AlertCircle, Check, X } from 'lucide-react';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -19,13 +19,24 @@ export default function Auth() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Register state
-  const [registerName, setRegisterName] = useState('');
+  const [registerFirstName, setRegisterFirstName] = useState('');
+  const [registerLastName, setRegisterLastName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
   const [registerError, setRegisterError] = useState('');
   const [registerLoading, setRegisterLoading] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState('');
+
+  // Password validation checks
+  const passwordValidation = useMemo(() => {
+    return {
+      minLength: registerPassword.length >= 8,
+      hasUppercase: /[A-Z]/.test(registerPassword),
+      hasLowercase: /[a-z]/.test(registerPassword),
+      hasNumber: /\d/.test(registerPassword),
+    };
+  }, [registerPassword]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,7 +47,12 @@ export default function Auth() {
       await login({ email: loginEmail, password: loginPassword });
       navigate('/home');
     } catch (error) {
-      setLoginError(error.message || 'Login failed');
+      // Extract error message from API response
+      const errorMessage =
+        error.response?.data?.detail ||
+        error.message ||
+        'Invalid email or password. Please try again.';
+      setLoginError(errorMessage);
     } finally {
       setLoginLoading(false);
     }
@@ -66,9 +82,12 @@ export default function Auth() {
 
       const domain = emailParts[1];
 
+      // Combine first and last name
+      const fullName = `${registerFirstName.trim()} ${registerLastName.trim()}`;
+
       // Call register with object parameter matching UserRegistrationRequest
       const response = await register({
-        full_name: registerName,
+        full_name: fullName,
         university_email: registerEmail,
         university_domain: domain,
         password: registerPassword,
@@ -82,7 +101,10 @@ export default function Auth() {
         navigate('/home');
       }
     } catch (error) {
-      setRegisterError(error.message || 'Registration failed');
+      // Extract error message from API response
+      const errorMessage =
+        error.response?.data?.detail || error.message || 'Registration failed. Please try again.';
+      setRegisterError(errorMessage);
     } finally {
       setRegisterLoading(false);
     }
@@ -175,17 +197,31 @@ export default function Auth() {
                     </div>
                   )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="register-name">Full Name</Label>
-                    <Input
-                      id="register-name"
-                      type="text"
-                      placeholder="John Doe"
-                      value={registerName}
-                      onChange={(e) => setRegisterName(e.target.value)}
-                      required
-                      disabled={registerLoading}
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-first-name">First Name</Label>
+                      <Input
+                        id="register-first-name"
+                        type="text"
+                        placeholder="John"
+                        value={registerFirstName}
+                        onChange={(e) => setRegisterFirstName(e.target.value)}
+                        required
+                        disabled={registerLoading}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-last-name">Last Name</Label>
+                      <Input
+                        id="register-last-name"
+                        type="text"
+                        placeholder="Doe"
+                        value={registerLastName}
+                        onChange={(e) => setRegisterLastName(e.target.value)}
+                        required
+                        disabled={registerLoading}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -212,8 +248,68 @@ export default function Auth() {
                       onChange={(e) => setRegisterPassword(e.target.value)}
                       required
                       disabled={registerLoading}
-                      minLength={6}
+                      minLength={8}
                     />
+                    {registerPassword && (
+                      <div className="space-y-1 mt-2">
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordValidation.minLength ? (
+                            <Check className="w-3 h-3 text-green-600" />
+                          ) : (
+                            <X className="w-3 h-3 text-red-500" />
+                          )}
+                          <span
+                            className={
+                              passwordValidation.minLength ? 'text-green-600' : 'text-slate-500'
+                            }
+                          >
+                            At least 8 characters
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordValidation.hasUppercase ? (
+                            <Check className="w-3 h-3 text-green-600" />
+                          ) : (
+                            <X className="w-3 h-3 text-red-500" />
+                          )}
+                          <span
+                            className={
+                              passwordValidation.hasUppercase ? 'text-green-600' : 'text-slate-500'
+                            }
+                          >
+                            Contains uppercase letter
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordValidation.hasLowercase ? (
+                            <Check className="w-3 h-3 text-green-600" />
+                          ) : (
+                            <X className="w-3 h-3 text-red-500" />
+                          )}
+                          <span
+                            className={
+                              passwordValidation.hasLowercase ? 'text-green-600' : 'text-slate-500'
+                            }
+                          >
+                            Contains lowercase letter
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordValidation.hasNumber ? (
+                            <Check className="w-3 h-3 text-green-600" />
+                          ) : (
+                            <X className="w-3 h-3 text-red-500" />
+                          )}
+                          <span
+                            className={
+                              passwordValidation.hasNumber ? 'text-green-600' : 'text-slate-500'
+                            }
+                          >
+                            Contains number
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -226,7 +322,7 @@ export default function Auth() {
                       onChange={(e) => setRegisterConfirmPassword(e.target.value)}
                       required
                       disabled={registerLoading}
-                      minLength={6}
+                      minLength={8}
                     />
                   </div>
 
